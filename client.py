@@ -3,9 +3,11 @@
 """
 import pickle
 import socket
+import struct
 import sys
 
 from message import *
+from vuls import *
 
 
 class Client:
@@ -21,8 +23,19 @@ class Client:
             sys.exit(1)
         # send connect command with my id
         login_cmd = Login(self.my_id);
-        msg = pickle(login_cmd)
-        self.my_socket.send(msg)
+        msg = pickle.dumps(login_cmd)
+        size = len(msg)
+        packed_size = struct.pack("!L", size)
+        self.my_socket.send(packed_size + msg)
 
     def share(self):
         pass
+
+
+def main():
+    c = Client("yotam")
+    c.connect(SERVER_IP, SERVER_PORT)
+
+
+if __name__ == '__main__':
+    main()
