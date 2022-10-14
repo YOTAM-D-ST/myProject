@@ -2,15 +2,19 @@
 yotam sahvit project server
 project name: unknown
 """
-from vidstream import StreamingServer
-import threading
+import socket
+import sys
+from vuls import *
 
-receiver = StreamingServer('172.29.236.26', 9999, 1)
+class Server:
+    def __init__(self, ip, port):
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-t = threading.Thread(target=receiver.start_server)
-t.start()
+    def connect(self, ip, port):
+        try:
+            self.server_socket.bind((ip, port))
+            self.server_socket.listen(SEND_TO_SOCKET)
+        except socket.error as msg:
+            print('Connection failure: %s\n terminating program' % msg)
+            sys.exit(1)
 
-while input("") != "STOP":
-    continue
-
-receiver.stop_server()
