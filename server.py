@@ -2,11 +2,11 @@
 yotam sahvit project server
 project name: unknown
 """
-import pickle
 import socket
-import struct
 import sys
+import threading
 
+import message
 from vuls import *
 
 
@@ -15,8 +15,8 @@ class Server:
         self.ip = ip
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connections = {}
         self.is_running = True
-
 
     def bind(self):
         try:
@@ -31,8 +31,10 @@ class Server:
     def accept(self):
         done = False
         while done is False:
-            client, _ = self.server_socket.accept()
-            self.handle_client(client)
+            client, address = self.server_socket.accept()
+            client_thread = threading.Thread(target=self.handle_client,
+                                             args=(client, address))
+            client_thread.start()
         self.server_socket.close()
 
     def run(self):
@@ -41,34 +43,47 @@ class Server:
         self.accept()
         self.is_running = True
 
-    def handle_client_msg(self, msg):
+    def handle_client_msg(self, client, msg):
         msg_id = msg.get_id()
+        print("got msg ", msg_id)
         match msg_id:
             case "login":
-                self.handle_login(msg)
+                self.handle_login(client, msg)
+            case "share":
+                self.handle_share(client, msg)
+            case "chat" | "frame":
+                self.handle_proxy(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
 
-    def handle_client(self, client_socket):
-        while self.is_running:
-            # get the header that includes the size of the rest of the message
-            payload_size_header = client_socket.recv(struct.calcsize("!L"))
-            payload_size = struct.unpack("!L", payload_size_header)[0]
-            # get the rest of the message
-            payload = client_socket.recv(payload_size)
-            # unpickle the msg into an object
-            msg = pickle.loads(payload)
-            # handle it
-            self.handle_client_msg(msg)
-            self.is_running = False
+    def handle_proxy(self, client, msg):
+        self.connections[msg.peer].sendall(msg.pack())
 
-    def handle_login(self, msg):
+    def handle_client(self, client_socket, _):
+        done = False
+        while not done:
+            try:
+                msg = message.recv(client_socket)
+                self.handle_client_msg(client_socket, msg)
+            except Exception as client_exception:
+                print("handle client error ", client_exception)
+                done = True
+        client_socket.close()
+
+    def handle_login(self, client, msg):
         print("login from " + msg.my_id)
+        self.connections[msg.my_id] = client
+
+    def handle_share(self, client, msg):
+        print("share req to ", msg.peer)
+        response = message.ShareResponse(True)
+        client.sendall(response.pack())
 
 
 def main():
     s = Server("0.0.0.0", SERVER_PORT)
     s.run()
+
 
 if __name__ == '__main__':
     main()
