@@ -53,8 +53,16 @@ class Server:
                 self.handle_share(client, msg)
             case "chat" | "frame":
                 self.handle_proxy(client, msg)
+            case "get-agents":
+                self.handle_get_agents(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
+
+    def handle_get_agents(self, client, msg):
+        ls = str(self.connections.keys())
+        print(ls)
+        response = message.GetAgentsResponse(ls)
+        client.sendall(response.pack())
 
     def handle_proxy(self, client, msg):
         self.connections[msg.peer].sendall(msg.pack())

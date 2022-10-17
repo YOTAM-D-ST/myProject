@@ -56,3 +56,15 @@ class Frame(Message):
         super().__init__("frame")
         self.frame = frame
         self.peer = peer
+
+
+class GetAgents(Message):
+    def __init__(self):
+        super().__init__("get-agents")
+
+
+class GetAgentsResponse(Message):
+    def __init__(self, agents):
+        super().__init__("get-agents_response")
+        self.agents = agents
+
