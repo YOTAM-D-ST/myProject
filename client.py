@@ -31,4 +31,4 @@ class Client:
             self.handle_server_response(msg)
 
     def send(self, msg):
-        self.my_socket.sendall((msg.pack()))
+        self.my_socket.sendall(msg.pack("!L"))
