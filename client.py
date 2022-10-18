@@ -18,7 +18,7 @@ class Client:
             print('Connection failure: %s\n terminating program' % msg)
             sys.exit(1)
         # send connect command with my id
-        login_cmd = message.Login(self.my_id);
+        login_cmd = message.Login(self.my_id)
         msg = pickle.dumps(login_cmd)
         size = len(msg)
         packed_size = struct.pack("!L", size)
@@ -31,4 +31,4 @@ class Client:
             self.handle_server_response(msg)
 
     def send(self, msg):
-        self.my_socket.sendall(msg.pack("!L"))
+        self.my_socket.sendall(msg.pack())

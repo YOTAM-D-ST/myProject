@@ -2,7 +2,6 @@ import sys
 
 import client
 import message
-from vuls import *
 
 import argparse
 
@@ -25,7 +24,7 @@ class Controller(client.Client):
         self.my_socket.sendall((msg.pack()))
 
     def do_get_agents(self):
-        self.send(message.GetAgents)
+        self.send(message.GetAgents())
         response = message.recv(self.my_socket)
         print(response.agents)
 
@@ -37,7 +36,7 @@ def main():
                         help='Kaleb c2 server address')
     parser.add_argument('--port', type=int, default="8585",
                         help='Kaleb c2 server port')
-    parser.add_argument('command', choices="get-agents",
+    parser.add_argument('command', choices=['get-agents'],
                         help='command to perform')
     args = parser.parse_args()
 
