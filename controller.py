@@ -4,6 +4,8 @@ import client
 import message
 from vuls import *
 
+import argparse
+
 
 class Controller(client.Client):
     def __init__(self):
@@ -29,9 +31,20 @@ class Controller(client.Client):
 
 
 def main():
+
+    parser = argparse.ArgumentParser(description='Kaleb c2 Controller.')
+    parser.add_argument('--server', required=True,
+                        help='Kaleb c2 server address')
+    parser.add_argument('--port', type=int, default="8585",
+                        help='Kaleb c2 server port')
+    parser.add_argument('command', choices="get-agents",
+                        help='command to perform')
+    args = parser.parse_args()
+
     c = Controller()
-    c.connect(SERVER_IP, SERVER_PORT)
-    c.do(sys.argv[1])
+    c.connect(args.server, args.port)
+
+    c.do(args.command)
 
 
 if __name__ == '__main__':
