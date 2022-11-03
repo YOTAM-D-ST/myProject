@@ -15,7 +15,7 @@ from vuls import *
 
 class Agent(client.Client):
     def share(self, peer):
-        share_cmd = Share(peer);
+        share_cmd = Share(peer)
         self.my_socket.sendall(share_cmd.pack())
         # get the header that includes the size of the rest of the message
         response = message.recv(self.my_socket)
@@ -49,7 +49,7 @@ class Agent(client.Client):
                                              [int(cv2.IMWRITE_JPEG_QUALITY),
                                               90])  # TODO: constants
                 frame_msg = Frame(frame,
-                                  sys.argv[2])  # TODO: get peer from someplace
+                                  "controller")  # TODO: get peer from someplace
                 self.my_socket.sendall(frame_msg.pack())
                 # TODO: handle exceptions
 

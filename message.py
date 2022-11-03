@@ -67,4 +67,3 @@ class GetAgentsResponse(Message):
     def __init__(self, agents):
         super().__init__("get-agents_response")
         self.agents = agents
-

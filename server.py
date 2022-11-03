@@ -68,7 +68,7 @@ class Server:
         self.connections[msg.peer].sendall(msg.pack())
 
     def handle_client(self, client_socket, _):
-        done = False
+        done = False  # todo: fix loop
         while not done:
             try:
                 msg = message.recv(client_socket)
@@ -83,9 +83,10 @@ class Server:
         self.connections[msg.my_id] = client
 
     def handle_share(self, client, msg):
-        print("share req to ", msg.peer)
+        peer = msg.peer
+        print("share req to ", peer)
         response = message.ShareResponse(True)
-        client.sendall(response.pack())
+        self.connections[peer].sendall(response.pack())
 
 
 def main():
