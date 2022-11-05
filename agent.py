@@ -14,21 +14,14 @@ from vuls import *
 
 
 class Agent(client.Client):
-    def share(self, peer):
-        share_cmd = Share(peer)
-        self.my_socket.sendall(share_cmd.pack())
-        # get the header that includes the size of the rest of the message
-        response = message.recv(self.my_socket)
-        # handle it
-        self.handle_server_response(response)
-        self.stream_screen(peer)
+
 
     def handle_server_response(self, response):
         msg_id = response.get_id()
         print("got server response ", msg_id)
         match msg_id:
-            case "share-response":
-                self.handle_share_response(response)
+            case "share":
+                self.share(response)
             case "chat":
                 self.handle_chat_response(response)
             case "frame":
@@ -36,22 +29,20 @@ class Agent(client.Client):
             case _:
                 print("unknown msg: " + msg_id)
 
-    def handle_share_response(self, response):
-        print("share response: ", response.ok)
-        if response.ok:
-            while True:  # TODO: when to stop ?
-                screen = pyautogui.screenshot()
-                frame = np.array(screen)
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frame = cv2.resize(frame, (1024, 576),  # TODO: constants
-                                   interpolation=cv2.INTER_AREA)
-                result, frame = cv2.imencode('.jpg', frame,
-                                             [int(cv2.IMWRITE_JPEG_QUALITY),
-                                              90])  # TODO: constants
-                frame_msg = Frame(frame,
-                                  "controller")  # TODO: get peer from someplace
-                self.my_socket.sendall(frame_msg.pack())
-                # TODO: handle exceptions
+    def share(self, response):
+        while True:  # TODO: when to stop ?
+            screen = pyautogui.screenshot()
+            frame = np.array(screen)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.resize(frame, (1024, 576),  # TODO: constants
+                               interpolation=cv2.INTER_AREA)
+            result, frame = cv2.imencode('.jpg', frame,
+                                         [int(cv2.IMWRITE_JPEG_QUALITY),
+                                          90])  # TODO: constants
+            frame_msg = Frame(frame,
+                              "controller")
+            self.my_socket.sendall(frame_msg.pack())
+            # TODO: handle exceptions
 
     def handle_chat_response(self, response):
         print("chat msg ", response.msg)

@@ -19,10 +19,7 @@ class Client:
             sys.exit(1)
         # send connect command with my id
         login_cmd = message.Login(self.my_id)
-        msg = pickle.dumps(login_cmd)
-        size = len(msg)
-        packed_size = struct.pack("!L", size)
-        self.my_socket.sendall(packed_size + msg)
+        self.my_socket.sendall(login_cmd.pack())
 
     def recv(self):
         while True:

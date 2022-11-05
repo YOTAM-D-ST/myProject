@@ -84,9 +84,11 @@ class Server:
 
     def handle_share(self, client, msg):
         peer = msg.peer
-        print("share req to ", peer)
+        print("share req to ", peer) #todo: check if ok
         response = message.ShareResponse(True)
-        self.connections[peer].sendall(response.pack())
+        self.connections["controller"].sendall(response.pack())
+        msg = message.Share(peer)
+        self.connections[peer].sendall(msg.pack())
 
 
 def main():
