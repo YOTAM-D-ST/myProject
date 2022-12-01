@@ -6,15 +6,36 @@ import sys
 import cv2
 import numpy as np
 import pyautogui
-
+import socket
 import client
 import message
 from message import *
 from vuls import *
 
 
-class Agent(client.Client):
+class Agent:
+    def __init__(self, my_id):
+        self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.my_id = my_id
 
+    def connect(self, ip, port):
+        try:
+            self.my_socket.connect((ip, port))
+        except socket.error as msg:
+            print('Connection failure: %s\n terminating program' % msg)
+            sys.exit(1)
+        # send connect command with my id
+        login_cmd = message.Login(self.my_id)
+        self.my_socket.sendall(login_cmd.pack())
+
+    def recv(self):
+        while True:
+            print("waiting for server")
+            msg = message.recv(self.my_socket)
+            self.handle_server_response(msg)
+
+    def send(self, msg):
+        self.my_socket.sendall(msg.pack())
 
     def handle_server_response(self, response):
         msg_id = response.get_id()
