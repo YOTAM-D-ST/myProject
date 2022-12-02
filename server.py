@@ -43,9 +43,6 @@ class Server:
         self.is_running = True
 
     def handle_client_msg(self, client, msg):
-        if msg.decode() == "game":
-            self.send_agent(client)
-            return
         msg_id = msg.get_id()
         print("got msg ", msg_id)
         match msg_id:

@@ -3,13 +3,17 @@ import struct
 
 
 def recv(recv_socket):
-    payload_size_header = recv_socket.recv(struct.calcsize("!L"))
-    payload_size = struct.unpack("!L", payload_size_header)[0]
-    # get the rest of the message
-    payload = recv_socket.recv(payload_size)
-    # unpickle the msg into an object
-    response = pickle.loads(payload, encoding="bytes")
-    return response
+    sender = recv_socket.recv(1).decode()
+    if sender == 's':
+        payload_size_header = recv_socket.recv(struct.calcsize("!L"))
+        payload_size = struct.unpack("!L", payload_size_header)[0]
+        # get the rest of the message
+        payload = recv_socket.recv(payload_size)
+        # unpickle the msg into an object
+        response = pickle.loads(payload, encoding="bytes")
+        return response
+    elif sender == 'g':
+        return sender
 
 
 class Message:
@@ -23,7 +27,7 @@ class Message:
         msg = pickle.dumps(self)
         size = len(msg)
         packed_size = struct.pack("!L", size)
-        return packed_size + msg
+        return 'a'.encode() + packed_size + msg
 
 
 class Login(Message):

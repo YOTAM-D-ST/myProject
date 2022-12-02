@@ -26,6 +26,7 @@ class Agent:
             sys.exit(1)
         # send connect command with my id
         login_cmd = message.Login(self.my_id)
+
         self.my_socket.sendall(login_cmd.pack())
 
     def recv(self):

