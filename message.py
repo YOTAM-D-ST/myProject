@@ -3,7 +3,10 @@ import struct
 
 
 def recv(recv_socket):
-    if recv_socket.recv(1).decode() == 'g':
+    c = recv_socket.recv(1).decode()
+    if c == "":
+        return ''
+    if c == 'g':
         return 'g'
     payload_size_header = recv_socket.recv(struct.calcsize("!L"))
     payload_size = struct.unpack("!L", payload_size_header)[0]
