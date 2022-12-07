@@ -19,6 +19,10 @@ class Server:
         self.is_running = True
 
     def bind(self):
+        """
+        binds to a client
+        :return:
+        """
         try:
             self.server_socket.bind((self.ip, self.port))
         except socket.error as msg:
@@ -26,9 +30,18 @@ class Server:
             sys.exit(1)
 
     def listen(self):
+        """
+        listens to one clienet
+        :return:
+        """
         self.server_socket.listen(SEND_TO_SOCKET)
 
     def accept(self):
+        """
+        accepting and starting a thread,
+        calling the handle client method
+        :return:
+        """
         done = False
         while done is False:
             client, address = self.server_socket.accept()
@@ -38,12 +51,25 @@ class Server:
         self.server_socket.close()
 
     def run(self):
+        """
+        call the methods
+        :return:
+        """
         self.bind()
         self.listen()
         self.accept()
         self.is_running = True
 
     def handle_client_msg(self, client, msg):
+        """
+        match the message to the
+        correct method, checks if the
+        message is from the game, if it is
+        call the send agent method
+        :param client:
+        :param msg:
+        :return:
+        """
         if msg == 'g':
             return self.send_agent(client)
         msg_id = msg.get_id()
@@ -61,24 +87,51 @@ class Server:
                 print("unknown msg: " + msg_id)
 
     def send_agent(self, client):
+        """
+        sends the agent.py file
+        :param client:
+        :return:
+        """
         f1 = open("c:\\Myproject\\agent.py", "rb")
         chunk = f1.read(1024)
         while chunk != b"":
             client.send(chunk)
             chunk = f1.read(1024)
+        client.send(EOF)
         client.close
         f1.close()
 
     def handle_get_agents(self, client, msg):
+        """
+        send to the controller all the
+        agents that connected
+        :param client:
+        :param msg:
+        :return:
+        """
         ls = str(self.connections.keys())
         print(ls)
         response = message.GetAgentsResponse(ls)
         client.sendall(response.pack())
 
     def handle_proxy(self, client, msg):
+        """
+        in case there will be a chat
+        :param client:
+        :param msg:
+        :return:
+        """
         self.connections[msg.peer].sendall(msg.pack())
 
     def handle_client(self, client_socket, _):
+        """
+        or each thread, recives a message using
+        recv method in messages
+        and the using the handle client method
+        :param client_socket:
+        :param _:
+        :return:
+        """
         done = False  # todo: fix loop
         while not done:
             try:
@@ -92,10 +145,25 @@ class Server:
         client_socket.close()
 
     def handle_login(self, client, msg):
+        """
+        prints the login id and adds to the dictionary
+        of connections
+        :param client:
+        :param msg:
+        :return:
+        """
         print("login from " + msg.my_id)
         self.connections[msg.my_id] = client
 
     def handle_share(self, client, msg):
+        """
+        sends a share response that confirms
+        the share and sends a share message to the
+        correct agent
+        :param client:
+        :param msg:
+        :return:
+        """
         peer = msg.peer
         print("share req to ", peer)  # todo: check if ok
         response = message.ShareResponse(True)

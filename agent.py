@@ -1,13 +1,13 @@
 """yotam shavit project
     project name: unknown
 """
+import socket
 import sys
 
 import cv2
 import numpy as np
 import pyautogui
-import socket
-import client
+
 import message
 from message import *
 from vuls import *
@@ -19,6 +19,13 @@ class Agent:
         self.my_id = my_id
 
     def connect(self, ip, port):
+        """
+        connects to the server then creates
+        a login message and sends it
+        :param ip:
+        :param port:
+        :return:
+        """
         try:
             self.my_socket.connect((ip, port))
         except socket.error as msg:
@@ -30,15 +37,30 @@ class Agent:
         self.my_socket.sendall(login_cmd.pack())
 
     def recv(self):
+        """
+        recive response from the server and
+        call handle server response method
+        :return:
+        """
         while True:
             print("waiting for server")
             msg = message.recv(self.my_socket)
             self.handle_server_response(msg)
 
     def send(self, msg):
+        """
+        call the pack method, sends to the server
+        :param msg:
+        :return:
+        """
         self.my_socket.sendall(msg.pack())
 
     def handle_server_response(self, response):
+        """
+        match response to the correct method
+        :param response:
+        :return:
+        """
         msg_id = response.get_id()
         print("got server response ", msg_id)
         match msg_id:
@@ -52,6 +74,12 @@ class Agent:
                 print("unknown msg: " + msg_id)
 
     def share(self, response):
+        """
+        method to share the screen , makes frames with cv2
+        libary and sends them
+        :param response:
+        :return:
+        """
         while True:  # TODO: when to stop ?
             screen = pyautogui.screenshot()
             frame = np.array(screen)
@@ -67,17 +95,23 @@ class Agent:
             # TODO: handle exceptions
 
     def handle_chat_response(self, response):
+        """
+        in case the server want to chat with the agent
+        :param response:
+        :return:
+        """
         print("chat msg ", response.msg)
 
     def handle_frame_response(self, response):
+        """
+        in case the agent want to recive frames
+        :param response:
+        :return:
+        """
         frame = response.frame
         frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
         cv2.imshow("hello", frame)
         cv2.waitKey(1)
-
-    def stream_screen(self, peer):
-        msg = Chat("hello", peer)
-        self.my_socket.sendall(msg.pack())
 
 
 def main():

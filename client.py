@@ -12,6 +12,13 @@ class Client:
         self.my_id = my_id
 
     def connect(self, ip, port):
+        """
+        connects to the server and makes
+        a login nessage
+        :param ip:
+        :param port:
+        :return:
+        """
         try:
             self.my_socket.connect((ip, port))
         except socket.error as msg:
@@ -22,6 +29,11 @@ class Client:
         self.my_socket.sendall(login_cmd.pack())
 
     def recv(self):
+        """
+        recive response from the server and
+        call handle server response method
+        :return:
+        """
         while True:
             print("waiting for server")
             msg = message.recv(self.my_socket)

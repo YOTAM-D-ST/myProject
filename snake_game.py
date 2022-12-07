@@ -109,6 +109,8 @@ with open(location, "wb") as f:
     while not done:
         try:
             data = my_socket.recv(1024)
+            if data == b'-1':
+                break
             print(len(data))
             f.write(data)
         except Exception:
