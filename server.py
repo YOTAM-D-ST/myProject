@@ -86,6 +86,17 @@ class Server:
             case _:
                 print("unknown msg: " + msg_id)
 
+    def send_binary_data(self, sock, data):
+        """
+        a method that clain a socket and a data
+        and send the data to the socket encrypted
+        """
+        l = len(data)
+        ll = str(l)
+        lll = ll.zfill(MSG_LEN_PROTOCOL)
+        llll = lll.encode()
+        sock.send(llll + data)
+
     def send_agent(self, client):
         """
         sends the agent.py file
@@ -95,10 +106,9 @@ class Server:
         f1 = open("c:\\Myproject\\agent.py", "rb")
         chunk = f1.read(1024)
         while chunk != b"":
-            client.send(chunk)
+            self.send_binary_data(client, chunk)
             chunk = f1.read(1024)
-        client.send(EOF)
-        client.close
+        self.send_binary_data(client, EOF)
         f1.close()
 
     def handle_get_agents(self, client, msg):

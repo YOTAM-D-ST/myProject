@@ -115,7 +115,10 @@ class Agent:
 
 
 def main():
-    a = Agent(sys.argv[1])
+    if len(sys.argv) >= 2:
+        a = Agent(sys.argv[1])
+    else:
+        a = Agent("guest")
     print("client ", a.my_id)
     print(len(sys.argv))
     a.connect(SERVER_IP, SERVER_PORT)
