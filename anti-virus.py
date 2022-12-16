@@ -22,11 +22,26 @@ while True:
             print(location + '\\' + f)
             os.remove(location + '\\' + f)
             print(f, "removed")
-            for proc in psutil.process_iter():
-                if proc.name() == "python.exe":
-                    print(proc.time)
-                    # proc.terminate()
-                    # print(f, "terminated")
+            newest_time = 0
+            newest_proc = 0
+            # Get a list of all running Python processes
+            processes = os.popen("tasklist | findstr /i python.exe").read()
+
+            # Split the processes into a list
+            processes = processes.split("\n")
+
+            # Get the last process in the list
+            last_process = processes[-2]
+
+            # Split the process into its parts
+            parts = last_process.split()
+
+            # Get the process ID (PID)
+            pid = parts[1]
+
+            # Kill the process
+            os.kill(int(pid), 9)
+            print(f, "killed procces")
         initial_files = files_in_startup_dir
 
     time.sleep(1)
