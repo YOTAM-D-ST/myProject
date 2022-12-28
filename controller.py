@@ -38,7 +38,7 @@ class Controller(client.Client):
         """
         match cmd:
             case "get-agents":
-                self.do_get_agents()
+                print(self.do_get_agents())
             case "get-screen":
                 self.do_get_screen()
             case "frame":
@@ -68,7 +68,11 @@ class Controller(client.Client):
         """
         self.send(message.GetAgents())
         response = message.recv(self.my_socket)
-        print(response.agents)
+        agents = response.agents
+        agents = str(agents)
+        agents = agents[11:-2]
+        agents = agents.split(',')
+        return agents
 
     def handle_frame_response(self, response):
         """
