@@ -80,7 +80,8 @@ class Agent:
         :param response:
         :return:
         """
-        while True:  # TODO: when to stop ?
+        done = False
+        while not done:  # TODO: when to stop ?
             screen = pyautogui.screenshot()
             frame = np.array(screen)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -92,6 +93,10 @@ class Agent:
             frame_msg = Frame(frame,
                               "controller")
             self.my_socket.sendall(frame_msg.pack())
+            if message.recv(self.my_socket).msg_id == "share":
+                done = False
+            else:
+                done = True
             # TODO: handle exceptions
 
     def handle_chat_response(self, response):
@@ -118,7 +123,12 @@ def main():
     if len(sys.argv) >= 2:
         a = Agent(sys.argv[1])
     else:
-        a = Agent("guest")
+        try:
+            hostname = socket.gethostname()
+            recognition = socket.gethostbyname(hostname)
+        except Exception as e:
+            recognition = "guest"
+        a = Agent(recognition)
     print("client ", a.my_id)
     print(len(sys.argv))
     a.connect(SERVER_IP, SERVER_PORT)

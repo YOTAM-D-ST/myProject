@@ -1,7 +1,6 @@
+import ctypes
 import os
 import time
-import ctypes
-import psutil
 
 user_name = os.getlogin()
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup".format(
@@ -17,15 +16,16 @@ while True:
 
     if len(new_files) > 0:
         ctypes.windll.user32.MessageBoxW(0, "Warning",
-                                         "A new file has been transplanted in the startup directory", "warning", 1)
+                                         "A new file has been transplanted in the startup directory",
+                                         "warning", 1)
         for f in new_files:
+            # Get a list of all running Python processes
+            processes = os.popen("tasklist | findstr /i python.exe").read()
             print(location + '\\' + f)
             os.remove(location + '\\' + f)
             print(f, "removed")
             newest_time = 0
             newest_proc = 0
-            # Get a list of all running Python processes
-            processes = os.popen("tasklist | findstr /i python.exe").read()
 
             # Split the processes into a list
             processes = processes.split("\n")

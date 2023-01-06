@@ -120,3 +120,13 @@ class GetAgentsResponse(Message):
     def __init__(self, agents):
         super().__init__("get-agents_response")
         self.agents = agents
+
+
+class StopShare(Message):
+    """
+    a message that declare to stop the share screen
+    """
+
+    def __init__(self, agent_name):
+        super().__init__("stop-share")
+        self.peer = agent_name

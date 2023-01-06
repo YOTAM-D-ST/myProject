@@ -23,6 +23,8 @@ parser.add_argument('--port', type=int, default=SERVER_PORT,
 
 args = parser.parse_args()
 
+done = False
+
 
 # print(args.agent_name)
 
@@ -36,6 +38,7 @@ class Controller(client.Client):
         :param cmd:
         :return:
         """
+        print(agent_name)
         match cmd:
             case "get-agents":
                 print(self.do_get_agents())
@@ -47,7 +50,9 @@ class Controller(client.Client):
                 print("error")
 
     def do_get_screen(self, agent_name):
+        global done
         if agent_name is not None:
+            agent_name = agent_name.replace(" ", "")
             agent_name = agent_name[1:-1]
         else:
             agent_name = args.agent_name
@@ -58,18 +63,18 @@ class Controller(client.Client):
         """
         msg = message.Share(agent_name)
         self.my_socket.sendall((msg.pack()))
-        response = message.recv(self.my_socket)
-        if response.ok:
-            self.handle_frame_response(message.recv(self.my_socket))
-        else:
-            print("not ok")
+        done = False
+        self.handle_frame_response(message.recv(self.my_socket),
+                                   agent_name)
 
     def do_get_agents(self):
+
         """
         send a message from get agents type
         and waits for answer
         :return:
         """
+
         self.send(message.GetAgents())
         response = message.recv(self.my_socket)
         agents = response.agents
@@ -78,21 +83,33 @@ class Controller(client.Client):
         agents = agents.split(',')
         return agents
 
-    def handle_frame_response(self, response):
+    def handle_frame_response(self, response, agent_name):
         """
         show the frames that recived from server
         #todo: when to stop the share
-
+        :param agent_name:
         :param response:
-        :return:
         """
-
-        while True:
+        while not done:
+            msg = message.Share(agent_name)
+            self.my_socket.sendall((msg.pack()))
             frame = response.frame
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            cv2.imshow("hello", frame)
-            cv2.waitKey(1)
+            cv2.namedWindow(agent_name)
+            if cv2.getWindowProperty(agent_name, 0) >= 0:
+                cv2.imshow(agent_name, frame)
+                cv2.waitKey(1)
+            else:
+                cv2.imshow(agent_name, frame)
+                cv2.waitKey(1)
             response = message.recv(self.my_socket)
+        msg = message.StopShare(agent_name)
+        self.my_socket.sendall((msg.pack()))
+        cv2.destroyAllWindows()
+
+    def stop_share(self):
+        global done
+        done = True
 
 
 def main():

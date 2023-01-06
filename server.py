@@ -83,8 +83,15 @@ class Server:
                 self.handle_proxy(client, msg)
             case "get-agents":
                 self.handle_get_agents(client, msg)
+            case "stop-share":
+                self.handle_stop_share(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
+
+    def handle_stop_share(self, sock, msg):
+        peer = msg.peer
+        print("stop share req to ", peer)
+        self.connections[peer].sendall(msg.pack())
 
     def send_binary_data(self, sock, data):
         """
@@ -176,8 +183,6 @@ class Server:
         """
         peer = msg.peer
         print("share req to ", peer)  # todo: check if ok
-        response = message.ShareResponse(True)
-        self.connections["controller"].sendall(response.pack())
         msg = message.Share(peer)
         self.connections[peer].sendall(msg.pack())
 
