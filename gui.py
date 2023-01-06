@@ -14,22 +14,24 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, None, title="My GUI")
         self.panel = wx.Panel(self)
         self.commands = agents
-        self.choice = wx.Choice(self.panel, choices=self.commands)
+        self.list = wx.ListBox(self.panel)
+        for agent in agents:
+            self.list.Append(agent)
         self.button = wx.Button(self.panel, label="Run")
         self.button.Bind(wx.EVT_BUTTON, self.on_button_click)
         self.layout()
 
     def layout(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.choice, 0, wx.ALL, 10)
+        sizer.Add(self.list, 20, wx.ALL, 30)
         sizer.Add(self.button, 0, wx.ALL, 10)
         self.panel.SetSizer(sizer)
 
     def on_button_click(self, event):
         # Get the selected command from the choice widget
-        agent = self.choice.GetStringSelection()
+        agent = self.list.GetStringSelection()
         # Run the selected command
-        c.do("get-screen {}".format(agent))
+        c.do("get-screen", agent)
 
 
 app = wx.App()

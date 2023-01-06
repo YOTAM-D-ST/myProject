@@ -30,7 +30,7 @@ class Controller(client.Client):
     def __init__(self):
         super().__init__("controller")
 
-    def do(self, cmd):
+    def do(self, cmd, agent_name=None):
         """
         match the command to the correct method
         :param cmd:
@@ -40,19 +40,23 @@ class Controller(client.Client):
             case "get-agents":
                 print(self.do_get_agents())
             case "get-screen":
-                self.do_get_screen()
+                self.do_get_screen(agent_name)
             case "frame":
                 self.handle_frame_response()
             case _:
                 print("error")
 
-    def do_get_screen(self):
+    def do_get_screen(self, agent_name):
+        if agent_name is not None:
+            agent_name = agent_name[1:-1]
+        else:
+            agent_name = args.agent_name
         """
         makes a message from type share
         sends to the server and wait for a confirm
         :return:
         """
-        msg = message.Share(args.agent_name)
+        msg = message.Share(agent_name)
         self.my_socket.sendall((msg.pack()))
         response = message.recv(self.my_socket)
         if response.ok:
@@ -82,6 +86,7 @@ class Controller(client.Client):
         :param response:
         :return:
         """
+
         while True:
             frame = response.frame
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
