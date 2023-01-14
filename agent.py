@@ -91,7 +91,7 @@ class Agent:
                                          [int(cv2.IMWRITE_JPEG_QUALITY),
                                           90])  # TODO: constants
             frame_msg = Frame(frame,
-                              "controller", self.my_id)
+                              response.sender, self.my_id)
             self.my_socket.sendall(frame_msg.pack())
             if message.recv(self.my_socket).msg_id == "share":
                 done = False

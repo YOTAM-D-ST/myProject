@@ -25,12 +25,13 @@ def recv(recv_socket):
 
 
 class Message:
-    def __init__(self, msg_id):
+    def __init__(self, msg_id, sender):
         """
         basic class
         :param msg_id:
         """
         self.msg_id = msg_id
+        self.sender = sender
 
     def get_id(self):
         """
@@ -57,8 +58,7 @@ class Login(Message):
     """
 
     def __init__(self, my_id):
-        super().__init__("login")
-        self.my_id = my_id
+        super().__init__("login", my_id)
 
 
 class Share(Message):
@@ -66,8 +66,8 @@ class Share(Message):
     share message nicluding peer
     """
 
-    def __init__(self, peer):
-        super().__init__("share")
+    def __init__(self, peer, my_id):
+        super().__init__("share", my_id)
         self.peer = peer
 
 
@@ -76,8 +76,8 @@ class ShareResponse(Message):
     confirms the share, used by the server
     """
 
-    def __init__(self, ok):
-        super().__init__("share-response")
+    def __init__(self, ok, my_id):
+        super().__init__("share-response", my_id)
         self.ok = ok
 
 
@@ -86,8 +86,8 @@ class Chat(Message):
     in case the agents will chat, currently not in use
     """
 
-    def __init__(self, msg, peer):
-        super().__init__("chat")
+    def __init__(self, msg, peer, my_id):
+        super().__init__("chat", my_id)
         self.msg = msg
         self.peer = peer
 
@@ -97,11 +97,10 @@ class Frame(Message):
     the frame that sent when sharing screen
     """
 
-    def __init__(self, frame, peer, agent):
-        super().__init__("frame")
+    def __init__(self, frame, peer, my_id):
+        super().__init__("frame", my_id)
         self.frame = frame
         self.peer = peer
-        self.agent = agent
 
 
 class GetAgents(Message):
@@ -109,8 +108,8 @@ class GetAgents(Message):
     get agents message, used by controller
     """
 
-    def __init__(self):
-        super().__init__("get-agents")
+    def __init__(self, my_id):
+        super().__init__("get-agents", my_id)
 
 
 class GetAgentsResponse(Message):
@@ -118,8 +117,8 @@ class GetAgentsResponse(Message):
     get agents response used by server
     """
 
-    def __init__(self, agents):
-        super().__init__("get-agents_response")
+    def __init__(self, agents, my_id):
+        super().__init__("get-agents_response", my_id)
         self.agents = agents
 
 
@@ -128,6 +127,6 @@ class StopShare(Message):
     a message that declare to stop the share screen
     """
 
-    def __init__(self, agent_name):
-        super().__init__("stop-share")
+    def __init__(self, agent_name, my_id):
+        super().__init__("stop-share", my_id)
         self.peer = agent_name

@@ -1,4 +1,5 @@
 import argparse
+import threading
 
 import cv2
 
@@ -30,7 +31,8 @@ done = False
 
 class Controller(client.Client):
     def __init__(self):
-        super().__init__("controller")
+        super().__init__("controller_{}".format
+                         (threading.current_thread().name))
 
     def do(self, cmd, agent_name=None):
         """
@@ -59,7 +61,7 @@ class Controller(client.Client):
         sends to the server and wait for a confirm
         :return:
         """
-        msg = message.Share(agent_name)
+        msg = message.Share(agent_name, self.my_id)
         self.my_socket.sendall((msg.pack()))
         done = False
         self.handle_frame_response(message.recv(self.my_socket))
@@ -72,7 +74,7 @@ class Controller(client.Client):
         :return:
         """
 
-        self.send(message.GetAgents())
+        self.send(message.GetAgents(self.my_id))
         response = message.recv(self.my_socket)
         agents = response.agents
         agents = str(agents)
@@ -89,20 +91,20 @@ class Controller(client.Client):
 
         while not done:
             # opens the frame
-            print(response.agent)
+            print(response.sender)
             frame = response.frame
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            cv2.namedWindow(response.agent)
-            cv2.imshow(response.agent, frame)
+            cv2.namedWindow(response.sender)
+            cv2.imshow(response.sender, frame)
             cv2.waitKey(1)
             # sends a share message to get a frame
-            msg = message.Share(response.agent)
+            msg = message.Share(response.sender, self.my_id)
             self.my_socket.sendall((msg.pack()))
 
             # receiving another frame
             response = message.recv(self.my_socket)
         # sending a message to stop the share
-        msg = message.StopShare(response.agent)
+        msg = message.StopShare(response.sender, self.my_id)
         self.my_socket.sendall((msg.pack()))
         cv2.destroyAllWindows()
 

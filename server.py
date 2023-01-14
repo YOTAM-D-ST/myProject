@@ -73,7 +73,7 @@ class Server:
         if msg == 'g':
             return self.send_agent(client)
         msg_id = msg.get_id()
-        print("got msg ", msg_id)
+        print("got msg ", msg_id, threading.current_thread())
         match msg_id:
             case "login":
                 self.handle_login(client, msg)
@@ -132,7 +132,7 @@ class Server:
         """
         ls = str(self.connections.keys())
         print(ls)
-        response = message.GetAgentsResponse(ls)
+        response = message.GetAgentsResponse(ls, msg.sender)
         client.sendall(response.pack())
 
     def handle_proxy(self, client, msg):
@@ -142,6 +142,7 @@ class Server:
         :param msg:
         :return:
         """
+        print("proxy ", msg.msg_id, " from ", msg.sender, " to ", msg.peer)
         self.connections[msg.peer].sendall(msg.pack())
 
     def handle_client(self, client_socket, _):
@@ -173,8 +174,8 @@ class Server:
         :param msg:
         :return:
         """
-        print("login from " + msg.my_id)
-        self.connections[msg.my_id] = client
+        print("login from " + msg.sender)
+        self.connections[msg.sender] = client
 
     def handle_share(self, client, msg):
         """
@@ -185,10 +186,8 @@ class Server:
         :param msg:
         :return:
         """
-        peer = msg.peer
-        print("share req to ", peer)  # todo: check if ok
-        msg = message.Share(peer)
-        self.connections[peer].sendall(msg.pack())
+        print("share req to ", msg.peer)  # todo: check if ok
+        self.connections[msg.peer].sendall(msg.pack())
 
 
 def main():
