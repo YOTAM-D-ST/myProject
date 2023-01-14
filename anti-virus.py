@@ -10,6 +10,10 @@ location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
 initial_files = os.listdir(location)
 
 while True:
+    """
+    create a list of the files in the startup
+    folder and check if any file added to the list
+    """
 
     files_in_startup_dir = os.listdir(location)
 

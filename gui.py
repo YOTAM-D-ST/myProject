@@ -1,5 +1,3 @@
-import string
-
 import wx
 
 from controller import *
@@ -72,10 +70,6 @@ class MyFrame(wx.Frame):
         :param event:
         :return:
         """
-        thread = threading.Thread(target=self.stop_share())
-        thread.start()
-
-    def stop_share(self):
         c.stop_share()
 
 
