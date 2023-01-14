@@ -97,10 +97,11 @@ class Frame(Message):
     the frame that sent when sharing screen
     """
 
-    def __init__(self, frame, peer):
+    def __init__(self, frame, peer, agent):
         super().__init__("frame")
         self.frame = frame
         self.peer = peer
+        self.agent = agent
 
 
 class GetAgents(Message):

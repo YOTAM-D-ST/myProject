@@ -91,7 +91,7 @@ class Agent:
                                          [int(cv2.IMWRITE_JPEG_QUALITY),
                                           90])  # TODO: constants
             frame_msg = Frame(frame,
-                              "controller")
+                              "controller", self.my_id)
             self.my_socket.sendall(frame_msg.pack())
             if message.recv(self.my_socket).msg_id == "share":
                 done = False
@@ -120,8 +120,8 @@ class Agent:
 
 
 def main():
-    if len(sys.argv) >= 2:
-        a = Agent(sys.argv[1])
+    if len(sys.argv) >= TWO_PARAMS:
+        a = Agent(sys.argv[SECOND_PARAM])
     else:
         try:
             hostname = socket.gethostname()
@@ -132,8 +132,8 @@ def main():
     print("client ", a.my_id)
     print(len(sys.argv))
     a.connect(SERVER_IP, SERVER_PORT)
-    if len(sys.argv) > 2:
-        a.share(sys.argv[2])
+    if len(sys.argv) > TWO_PARAMS:
+        a.share(sys.argv[TWO_PARAMS])
     a.recv()
 
 

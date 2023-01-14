@@ -44,8 +44,6 @@ class Controller(client.Client):
                 print(self.do_get_agents())
             case "get-screen":
                 self.do_get_screen(agent_name)
-            case "frame":
-                self.handle_frame_response()
             case _:
                 print("error")
 
@@ -53,7 +51,7 @@ class Controller(client.Client):
         global done
         if agent_name is not None:
             agent_name = agent_name.replace(" ", "")
-            agent_name = agent_name[1:-1]
+            agent_name = agent_name[FIRST_LETTER:LAST_LETTER]
         else:
             agent_name = args.agent_name
         """
@@ -64,8 +62,7 @@ class Controller(client.Client):
         msg = message.Share(agent_name)
         self.my_socket.sendall((msg.pack()))
         done = False
-        self.handle_frame_response(message.recv(self.my_socket),
-                                   agent_name)
+        self.handle_frame_response(message.recv(self.my_socket))
 
     def do_get_agents(self):
 
@@ -79,35 +76,42 @@ class Controller(client.Client):
         response = message.recv(self.my_socket)
         agents = response.agents
         agents = str(agents)
-        agents = agents[11:-2]
+        agents = agents[FIRSR_L_AGENT:LAST_L_AGENT]
         agents = agents.split(',')
         return agents
 
-    def handle_frame_response(self, response, agent_name):
+    def handle_frame_response(self, response):
         """
         show the frames that recived from server
         #todo: when to stop the share
-        :param agent_name:
         :param response:
         """
+
         while not done:
-            msg = message.Share(agent_name)
-            self.my_socket.sendall((msg.pack()))
+            # opens the frame
+            print(response.agent)
             frame = response.frame
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            cv2.namedWindow(agent_name)
-            if cv2.getWindowProperty(agent_name, 0) >= 0:
-                cv2.imshow(agent_name, frame)
-                cv2.waitKey(1)
-            else:
-                cv2.imshow(agent_name, frame)
-                cv2.waitKey(1)
+            cv2.namedWindow(response.agent)
+            cv2.imshow(response.agent, frame)
+            cv2.waitKey(1)
+            # sends a share message to get a frame
+            msg = message.Share(response.agent)
+            self.my_socket.sendall((msg.pack()))
+
+            # receiving another frame
             response = message.recv(self.my_socket)
-        msg = message.StopShare(agent_name)
+        # sending a message to stop the share
+        msg = message.StopShare(response.agent)
         self.my_socket.sendall((msg.pack()))
         cv2.destroyAllWindows()
 
     def stop_share(self):
+        """
+        stop the loop of the share by changing the value
+        of 'done'
+        :return:
+        """
         global done
         done = True
 

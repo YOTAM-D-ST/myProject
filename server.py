@@ -15,7 +15,7 @@ class Server:
         self.ip = ip
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connections = {}
+        self.connections = {}  # a dictionary of connections {name:socket}
         self.is_running = True
 
     def bind(self):
@@ -27,7 +27,7 @@ class Server:
             self.server_socket.bind((self.ip, self.port))
         except socket.error as msg:
             print('Connection failure: %s\n terminating program' % msg)
-            sys.exit(1)
+            sys.exit(EXIT)
 
     def listen(self):
         """
@@ -52,7 +52,7 @@ class Server:
 
     def run(self):
         """
-        call the methods
+        call the methods that runs the socket
         :return:
         """
         self.bind()
@@ -89,6 +89,10 @@ class Server:
                 print("unknown msg: " + msg_id)
 
     def handle_stop_share(self, sock, msg):
+        """the gui calls this method when
+        pressing the stop share button
+        the method sends a stop share message
+        """
         peer = msg.peer
         print("stop share req to ", peer)
         self.connections[peer].sendall(msg.pack())

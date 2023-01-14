@@ -3,8 +3,9 @@ import os
 import time
 
 user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup".format(
-    user_name)
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\Startup".format(
+                user_name)
 
 initial_files = os.listdir(location)
 
@@ -16,7 +17,9 @@ while True:
 
     if len(new_files) > 0:
         ctypes.windll.user32.MessageBoxW(0, "Warning",
-                                         "A new file has been transplanted in the startup directory",
+                                         "A new file has been "
+                                         "transplanted in the "
+                                         "startup directory",
                                          "warning", 1)
         for f in new_files:
             # Get a list of all running Python processes
