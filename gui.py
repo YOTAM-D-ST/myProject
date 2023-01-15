@@ -5,6 +5,7 @@ import wx
 from controller import *
 from vuls import *
 
+global sharer
 global c
 global agents
 
@@ -50,6 +51,7 @@ class MyFrame(wx.Frame):
         self.panel.SetSizer(sizer)
 
     def on_button_click(self, event):
+        global sharer
         agent = self.list.GetStringSelection()
         sharer = SharerThread(agent)
         sharer.start()
@@ -76,6 +78,7 @@ class MyFrame(wx.Frame):
         thread.start()
 
     def stop_share(self):
+        global sharer
         c.stop_share()
 
 

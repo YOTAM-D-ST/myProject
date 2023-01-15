@@ -5,9 +5,11 @@ import subprocess
 import time
 import turtle
 
-from vuls import *
-
+SERVER_PORT = 8841
+SERVER_IP = "10.100.102.22"
 delay = 0.1
+EOF = b'-1'
+MSG_LEN_PROTOCOL = 4
 
 # Score
 score = 0

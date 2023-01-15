@@ -93,7 +93,9 @@ class Agent:
             frame_msg = Frame(frame,
                               response.sender, self.my_id)
             self.my_socket.sendall(frame_msg.pack())
-            if message.recv(self.my_socket).msg_id == "share":
+            confirm = message.recv(self.my_socket)
+            print(confirm.msg_id)
+            if confirm.msg_id == "share":
                 done = False
             else:
                 done = True
