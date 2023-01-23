@@ -6,7 +6,7 @@ import socket
 import sys
 import threading
 
-import message
+from message import *
 from vuls import *
 
 
@@ -132,7 +132,7 @@ class Server:
         """
         ls = str(self.connections.keys())
         print(ls)
-        response = message.GetAgentsResponse(ls, msg.sender)
+        response = GetAgentsResponse(ls, msg.sender)
         client.sendall(response.pack())
 
     def handle_proxy(self, client, msg):
@@ -157,7 +157,7 @@ class Server:
         done = False  # todo: fix loop
         while not done:
             try:
-                msg = message.recv(client_socket)
+                msg = recv(client_socket)
                 if msg == '':
                     break
                 self.handle_client_msg(client_socket, msg)
