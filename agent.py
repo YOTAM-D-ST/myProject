@@ -8,9 +8,155 @@ import cv2
 import numpy as np
 import pyautogui
 
-import message
-from message import *
-from vuls import *
+SERVER_IP = "127.0.0.1"
+SERVER_PORT = 8841
+SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
+EOF = b'-1'
+MSG_LEN_PROTOCOL = 4
+# size of sock rcv buffer
+SOCK_READ_SIZE = 4096
+FIRST_LETTER = 1
+LAST_LETTER = -1
+EXIT = 1
+TWO_PARAMS = 2
+SECOND_PARAM = 1
+FIRSR_L_AGENT = 11
+LAST_L_AGENT = -2
+WINDOW_PROPERTY = 0
+CHUNKS = 1024
+
+import pickle
+import struct
+
+
+def recv(recv_socket):
+    """
+    the protocol, using pickle and struct libary,
+    gets the header recive the message.
+    returns the message
+    :param recv_socket:
+    :return:
+    """
+    c = recv_socket.recv(1).decode()
+    if c == "":
+        return ''
+    if c == 'g':
+        return 'g'
+    payload_size_header = recv_socket.recv(struct.calcsize("!L"))
+    payload_size = struct.unpack("!L", payload_size_header)[0]
+    # get the rest of the message
+    payload = recv_socket.recv(payload_size)
+    # unpickle the msg into an object
+    response = pickle.loads(payload, encoding="bytes")
+    return response
+
+
+class Message:
+    def __init__(self, msg_id, sender):
+        """
+        basic class
+        :param msg_id:
+        """
+        self.msg_id = msg_id
+        self.sender = sender
+
+    def get_id(self):
+        """
+        returns the id
+        :return:
+        """
+        return self.msg_id
+
+    def pack(self):
+        """
+        packs the message so it
+        culd be send using socket
+        :return:
+        """
+        msg = pickle.dumps(self)
+        size = len(msg)
+        packed_size = struct.pack("!L", size)
+        return 'a'.encode() + packed_size + msg
+
+
+class Login(Message):
+    """
+    login sent to the server to identify
+    """
+
+    def __init__(self, my_id):
+        super().__init__("login", my_id)
+
+
+class Share(Message):
+    """
+    share message nicluding peer
+    """
+
+    def __init__(self, peer, my_id):
+        super().__init__("share", my_id)
+        self.peer = peer
+
+
+class ShareResponse(Message):
+    """
+    confirms the share, used by the server
+    """
+
+    def __init__(self, ok, my_id):
+        super().__init__("share-response", my_id)
+        self.ok = ok
+
+
+class Chat(Message):
+    """
+    in case the agents will chat, currently not in use
+    """
+
+    def __init__(self, msg, peer, my_id):
+        super().__init__("chat", my_id)
+        self.msg = msg
+        self.peer = peer
+
+
+class Frame(Message):
+    """
+    the frame that sent when sharing screen
+    """
+
+    def __init__(self, frame, peer, my_id):
+        super().__init__("frame", my_id)
+        self.frame = frame
+        self.peer = peer
+
+
+class GetAgents(Message):
+    """
+    get agents message, used by controller
+    """
+
+    def __init__(self, my_id):
+        super().__init__("get-agents", my_id)
+
+
+class GetAgentsResponse(Message):
+    """
+    get agents response used by server
+    """
+
+    def __init__(self, agents, my_id):
+        super().__init__("get-agents_response", my_id)
+        self.agents = agents
+
+
+class StopShare(Message):
+    """
+    a message that declare to stop the share screen
+    """
+
+    def __init__(self, agent_name, my_id):
+        super().__init__("stop-share", my_id)
+        self.peer = agent_name
 
 
 class Agent:
@@ -32,7 +178,7 @@ class Agent:
             print('Connection failure: %s\n terminating program' % msg)
             sys.exit(1)
         # send connect command with my id
-        login_cmd = message.Login(self.my_id)
+        login_cmd = Login(self.my_id)
 
         self.my_socket.sendall(login_cmd.pack())
 
@@ -44,7 +190,7 @@ class Agent:
         """
         while True:
             print("waiting for server")
-            msg = message.recv(self.my_socket)
+            msg = recv(self.my_socket)
             self.handle_server_response(msg)
 
     def send(self, msg):
@@ -93,7 +239,9 @@ class Agent:
             frame_msg = Frame(frame,
                               response.sender, self.my_id)
             self.my_socket.sendall(frame_msg.pack())
-            if message.recv(self.my_socket).msg_id == "share":
+            confirm = recv(self.my_socket)
+            print(confirm.msg_id)
+            if confirm.msg_id == "share":
                 done = False
             else:
                 done = True

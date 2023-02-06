@@ -106,7 +106,7 @@ class Controller(client.Client):
         # sending a message to stop the share
         msg = message.StopShare(response.sender, self.my_id)
         self.my_socket.sendall((msg.pack()))
-        cv2.destroyAllWindows()
+        cv2.destroyWindow(response.sender)
 
     def stop_share(self):
         """
