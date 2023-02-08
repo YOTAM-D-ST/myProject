@@ -18,8 +18,8 @@ SOCK_READ_SIZE = 4096
 FIRST_LETTER = 1
 LAST_LETTER = -1
 EXIT = 1
-TWO_PARAMS = 2
-SECOND_PARAM = 1
+NUM_OF_EXPECTED_PARAMS = 2
+PARAM_NAME_OF_AGENT = 1
 FIRSR_L_AGENT = 11
 LAST_L_AGENT = -2
 WINDOW_PROPERTY = 0
@@ -268,8 +268,8 @@ class Agent:
 
 
 def main():
-    if len(sys.argv) >= TWO_PARAMS:
-        a = Agent(sys.argv[SECOND_PARAM])
+    if len(sys.argv) >= NUM_OF_EXPECTED_PARAMS:
+        a = Agent(sys.argv[PARAM_NAME_OF_AGENT])
     else:
         try:
             hostname = socket.gethostname()
@@ -280,8 +280,8 @@ def main():
     print("client ", a.my_id)
     print(len(sys.argv))
     a.connect(SERVER_IP, SERVER_PORT)
-    if len(sys.argv) > TWO_PARAMS:
-        a.share(sys.argv[TWO_PARAMS])
+    if len(sys.argv) > NUM_OF_EXPECTED_PARAMS:
+        a.share(sys.argv[NUM_OF_EXPECTED_PARAMS])
     a.recv()
 
 

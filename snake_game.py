@@ -1,3 +1,9 @@
+# importing those three liabries
+# for the agent file
+import cv2
+import numpy as np
+import pyautogui
+
 import os
 import random
 import socket
@@ -6,7 +12,7 @@ import time
 import turtle
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = "8080"
+SERVER_PORT = 8841
 MSG_LEN_PROTOCOL = 4
 EOF = b'-1'
 delay = 0.1

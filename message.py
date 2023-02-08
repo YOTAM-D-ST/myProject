@@ -11,6 +11,7 @@ def recv(recv_socket):
     :return:
     """
     c = recv_socket.recv(1).decode()
+    print(c)
     if c == "":
         return ''
     if c == 'g':
@@ -19,6 +20,15 @@ def recv(recv_socket):
     payload_size = struct.unpack("!L", payload_size_header)[0]
     # get the rest of the message
     payload = recv_socket.recv(payload_size)
+    while True:
+        if len(payload) == payload_size:
+            break
+        payload += recv_socket.recv(payload_size)
+
+    if len(payload) != payload_size:
+        # log the error or raise an exception with a custom message
+        print("Error: received payload ", len(payload), " size does not match expected size ", payload_size)
+        return None
     # unpickle the msg into an object
     response = pickle.loads(payload, encoding="bytes")
     return response
