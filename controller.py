@@ -14,6 +14,8 @@ subparsers = parser.add_subparsers(dest="command")
 getscreen_parser = subparsers.add_parser("get-screen")
 getscreen_parser.add_argument('agent_name', help="for share command")
 
+getscreen_parser = subparsers.add_parser("get-version")
+
 getagents_parser = subparsers.add_parser("get-agents")
 
 parser.add_argument('--server', default='localhost',
@@ -46,8 +48,16 @@ class Controller(client.Client):
                 print(self.do_get_agents())
             case "get-screen":
                 self.do_get_screen(agent_name)
+            case "get-version":
+                self.do_get_version(agent_name)
             case _:
                 print("error")
+
+    def do_get_version(self, agent):
+        self.send(message.GetVersion(self.my_id, "amit"))
+        response = message.recv(self.my_socket)
+        version = response.version
+        return version
 
     def do_get_screen(self, agent_name):
         global done

@@ -79,14 +79,27 @@ class Server:
                 self.handle_login(client, msg)
             case "share":
                 self.handle_share(client, msg)
-            case "chat" | "frame":
+            case "chat" | "frame" | "version":
                 self.handle_proxy(client, msg)
             case "get-agents":
                 self.handle_get_agents(client, msg)
             case "stop-share":
                 self.handle_stop_share(client, msg)
+            case "get-version":
+                self.handle_get_version(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
+
+    def handle_get_version(self, client, msg):
+        """
+        the gui calls this method when
+        pressing the get version button
+        the method sends a get version message
+        """
+        peer = msg.peer
+        print("get version req to ", peer)
+        print(self.connections[peer])
+        self.connections[peer].sendall(msg.pack())
 
     def handle_stop_share(self, sock, msg):
         """the gui calls this method when
@@ -142,6 +155,7 @@ class Server:
         :param msg:
         :return:
         """
+        print(msg.sender)
         print("proxy ", msg.msg_id, " from ", msg.sender, " to ", msg.peer)
         self.connections[msg.peer].sendall(msg.pack())
 
@@ -157,10 +171,10 @@ class Server:
         done = False  # todo: fix loop
         while not done:
             # try:
-                msg = recv(client_socket)
-                if msg == '':
-                    break
-                self.handle_client_msg(client_socket, msg)
+            msg = recv(client_socket)
+            if msg == '':
+                break
+            self.handle_client_msg(client_socket, msg)
         #     except Exception as client_exception:
         #         print("handle client error ", client_exception)
         #         done = True

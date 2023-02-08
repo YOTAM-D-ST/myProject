@@ -140,3 +140,16 @@ class StopShare(Message):
     def __init__(self, agent_name, my_id):
         super().__init__("stop-share", my_id)
         self.peer = agent_name
+
+
+class Version(Message):
+    def __init__(self, version, my_id):
+        super().__init__("version", my_id)
+        self.version = version
+        self.peer = "controller"
+
+
+class GetVersion(Message):
+    def __init__(self, my_id, agent):
+        super().__init__("get-version", my_id)
+        self.peer = agent

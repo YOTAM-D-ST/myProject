@@ -3,7 +3,8 @@
 """
 import socket
 import sys
-
+import platform
+import subprocess
 import cv2
 import numpy as np
 import pyautogui
@@ -159,6 +160,19 @@ class StopShare(Message):
         self.peer = agent_name
 
 
+class Version(Message):
+    def __init__(self, version, my_id):
+        super().__init__("version", my_id)
+        self.version = version
+        self.peer = "controller"
+
+
+class GetVersion(Message):
+    def __init__(self, my_id, agent):
+        super().__init__("get-version", my_id)
+        self.peer = agent
+
+
 class Agent:
     def __init__(self, my_id):
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -216,6 +230,8 @@ class Agent:
                 self.handle_chat_response(response)
             case "frame":
                 self.handle_frame_response(response)
+            case "get-version":
+                self.handle_get_version_response()
             case _:
                 print("unknown msg: " + msg_id)
 
@@ -255,16 +271,27 @@ class Agent:
         """
         print("chat msg ", response.msg)
 
-    def handle_frame_response(self, response):
-        """
-        in case the agent want to recive frames
-        :param response:
-        :return:
-        """
-        frame = response.frame
-        frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-        cv2.imshow("hello", frame)
-        cv2.waitKey(1)
+    def handle_get_version_response(self):
+        operating_system = platform.system()
+        if operating_system == "Windows":
+            command = "wmic os get caption,version"
+            result = subprocess.check_output(command, shell=True).decode("utf-8")
+            version = result.splitlines()[1].strip().split(" ")[-1]
+            if version.startswith("10.") and version >= "10.0.19041":
+                msg = Version("Your operating system version is up-to-date: " + version, self.my_id)
+            else:
+                msg = Version("Your operating system version is not up-to-date: " + version, self.my_id)
+        elif operating_system == "Linux":
+            command = "lsb_release -d"
+            result = subprocess.check_output(command, shell=True).decode("utf-8")
+            version = result.split(":")[1].strip()
+            if version:
+                msg = Version("Your operating system version is up-to-date: " + version, self.my_id)
+            else:
+                msg = ("Your operating system version is not up-to-date: " + version, self.my_id)
+        else:
+            msg = Version("Your operating system is not supported by this code", self.my_id)
+        self.my_socket.sendall(msg.pack())
 
 
 def main():
