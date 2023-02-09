@@ -146,7 +146,7 @@ class Version(Message):
     def __init__(self, version, my_id):
         super().__init__("version", my_id)
         self.version = version
-        self.peer = "controller"
+        self.peer = "controller_MainThread"
 
 
 class GetVersion(Message):

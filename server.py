@@ -98,6 +98,7 @@ class Server:
         """
         peer = msg.peer
         print("get version req to ", peer)
+        print(self.connections.keys())
         print(self.connections[peer])
         self.connections[peer].sendall(msg.pack())
 
@@ -157,6 +158,7 @@ class Server:
         """
         print(msg.sender)
         print("proxy ", msg.msg_id, " from ", msg.sender, " to ", msg.peer)
+        print(self.connections.keys())
         self.connections[msg.peer].sendall(msg.pack())
 
     def handle_client(self, client_socket, _):

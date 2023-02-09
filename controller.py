@@ -49,7 +49,7 @@ class Controller(client.Client):
             case "get-screen":
                 self.do_get_screen(agent_name)
             case "get-version":
-                self.do_get_version(agent_name)
+                return self.do_get_version(agent_name)
             case _:
                 print("error")
 

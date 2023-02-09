@@ -60,10 +60,11 @@ class MyFrame(wx.Frame):
         cont.connect(SERVER_IP, SERVER_PORT)
         # Run the selected command
         version = cont.do("get-version", agent)
-        width, height = self.GetSize()
-        x = width - 100
-        y = height - 50
-        self.static_text = wx.StaticText(self, pos=(x, y), size=(10, 10), title=version)
+        # width, height = self.GetSize()
+        # x = width - 100
+        # y = height - 50
+        # self.static_text = wx.StaticText(self, pos=(x, y), size=(10, 10), title=version)
+        print(version)
 
     def on_button_click(self, event):
         global sharer
