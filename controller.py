@@ -53,8 +53,13 @@ class Controller(client.Client):
             case _:
                 print("error")
 
-    def do_get_version(self, agent):
-        self.send(message.GetVersion(self.my_id, "amit"))
+    def do_get_version(self, agent_name):
+        if agent_name is not None:
+            agent_name = agent_name.replace(" ", "")
+            agent_name = agent_name[FIRST_LETTER:LAST_LETTER]
+        else:
+            agent_name = args.agent_name
+        self.send(message.GetVersion(self.my_id, agent_name))
         response = message.recv(self.my_socket)
         version = response.version
         return version

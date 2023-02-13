@@ -33,11 +33,12 @@ class MyFrame(wx.Frame):
         for agent in agents:
             self.list.Append(agent)
             # create a run button that calls the share
-        self.button = wx.Button(self.panel, label="Run", pos=(100, 100))
+        self.button = wx.Button(self.panel, label="Run", pos=(300, 100))
         self.button.Bind(wx.EVT_BUTTON, self.on_button_click)
         # create a button for the version command
         self.button = wx.Button(self.panel, label="version", pos=(100, 300))
         self.button.Bind(wx.EVT_BUTTON, self.on_version_button_click)
+
         # create a stop button that stops the share
         self.stop_button = wx.Button(self.panel, label="stop", pos=(0, 0))
         self.stop_button.Bind(wx.EVT_BUTTON, self.on_stop_button_click)
@@ -60,10 +61,6 @@ class MyFrame(wx.Frame):
         cont.connect(SERVER_IP, SERVER_PORT)
         # Run the selected command
         version = cont.do("get-version", agent)
-        # width, height = self.GetSize()
-        # x = width - 100
-        # y = height - 50
-        # self.static_text = wx.StaticText(self, pos=(x, y), size=(10, 10), title=version)
         print(version)
 
     def on_button_click(self, event):

@@ -27,7 +27,8 @@ def recv(recv_socket):
 
     if len(payload) != payload_size:
         # log the error or raise an exception with a custom message
-        print("Error: received payload ", len(payload), " size does not match expected size ", payload_size)
+        print("Error: received payload ", len(payload),
+              " size does not match expected size ", payload_size)
         return None
     # unpickle the msg into an object
     response = pickle.loads(payload, encoding="bytes")

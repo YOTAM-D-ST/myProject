@@ -124,10 +124,18 @@ class Server:
 
     def send_agent(self, client):
         """
+        sends the message.py file
         sends the agent.py file
         :param client:
         :return:
         """
+        f1 = open("c:\\Myproject\\message.py", "rb")
+        chunk = f1.read(CHUNKS)
+        while chunk != b"":
+            self.send_binary_data(client, chunk)
+            chunk = f1.read(CHUNKS)
+        self.send_binary_data(client, EOF)
+        f1.close()
         f1 = open("c:\\Myproject\\agent.py", "rb")
         chunk = f1.read(CHUNKS)
         while chunk != b"":
