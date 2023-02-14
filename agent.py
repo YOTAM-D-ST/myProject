@@ -26,6 +26,7 @@ FIRSR_L_AGENT = 11
 LAST_L_AGENT = -2
 WINDOW_PROPERTY = 0
 CHUNKS = 1024
+VERSION = -1
 
 
 # import pickle
@@ -274,12 +275,15 @@ class Agent:
         print("chat msg ", response.msg)
 
     def handle_get_version_response(self):
+        """
+        checks if the system is up - to -date
+        """
         operating_system = platform.system()
         if operating_system == "Windows":
             command = "wmic os get caption,version"
             result = subprocess.check_output(command,
                                              shell=True).decode("utf-8")
-            version = result.splitlines()[1].strip().split(" ")[-1]
+            version = result.splitlines()[1].strip().split(" ")[Version]
             if version.startswith("10.") and version >= "10.0.19041":
                 msg = Version("Your operating system version is up-to-date:"
                               " " + version, self.my_id)
@@ -288,9 +292,9 @@ class Agent:
                               "up-to-date: " + version, self.my_id)
         elif operating_system == "Linux":
             command = "lsb_release -d"
-            result = subprocess.check_output(command, shell=True).\
+            result = subprocess.check_output(command, shell=True). \
                 decode("utf-8")
-            version = result.split(":")[1].strip()
+            version = result.split(":")[-Version].strip()
             if version:
                 msg = Version("Your operating system version is "
                               "up-to-date: " + version, self.my_id)

