@@ -54,6 +54,12 @@ class Controller(client.Client):
                 print("error")
 
     def do_get_version(self, agent_name):
+        """
+        sends a get version command
+
+        :param agent_name:
+        :return:
+        """
         if agent_name is not None:
             agent_name = agent_name.replace(" ", "")
             agent_name = agent_name[FIRST_LETTER:LAST_LETTER]
@@ -65,6 +71,11 @@ class Controller(client.Client):
         return version
 
     def do_get_screen(self, agent_name):
+        """
+        sends a get screen command
+        :param agent_name:
+        :return:
+        """
         global done
         if agent_name is not None:
             agent_name = agent_name.replace(" ", "")
@@ -134,6 +145,10 @@ class Controller(client.Client):
 
 
 def main():
+    """
+    makes a controler object and connects to the server
+    :return:
+    """
     c = Controller()
     c.connect(args.server, args.port)
 

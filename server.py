@@ -180,15 +180,15 @@ class Server:
         """
         done = False  # todo: fix loop
         while not done:
-            # try:
-            msg = recv(client_socket)
-            if msg == '':
-                break
-            self.handle_client_msg(client_socket, msg)
-        #     except Exception as client_exception:
-        #         print("handle client error ", client_exception)
-        #         done = True
-        # client_socket.close()
+            try:
+                msg = recv(client_socket)
+                if msg == '':
+                    break
+                self.handle_client_msg(client_socket, msg)
+            except Exception as client_exception:
+                print("handle client error ", client_exception)
+                done = True
+        client_socket.close()
 
     def handle_login(self, client, msg):
         """

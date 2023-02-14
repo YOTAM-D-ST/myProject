@@ -144,6 +144,11 @@ class StopShare(Message):
 
 
 class Version(Message):
+    """
+    a message that commands to return if
+    the software is up to date
+    """
+
     def __init__(self, version, my_id):
         super().__init__("version", my_id)
         self.version = version
@@ -151,6 +156,11 @@ class Version(Message):
 
 
 class GetVersion(Message):
+    """
+    returns the answer for the get verion
+    command
+    """
+
     def __init__(self, my_id, agent):
         super().__init__("get-version", my_id)
         self.peer = agent
