@@ -4,8 +4,7 @@ import time
 
 user_name = os.getlogin()
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
-           "\\Windows\\Start Menu\\Programs\\Startup".format(
-                user_name)
+           "\\Windows\\Start Menu\\Programs\\Startup".format(user_name)
 
 initial_files = os.listdir(location)
 

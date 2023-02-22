@@ -1,4 +1,6 @@
 import string
+import threading
+import time
 
 import wx
 
@@ -46,7 +48,7 @@ class MyFrame(wx.Frame):
         self.list = wx.ListBox(self.panel)
         for agent in agents:
             self.list.Append(agent)
-            # create a run button that calls the share
+        # create a run button that calls the share
         self.button = wx.Button(self.panel, label="Run", pos=(300, 100))
         self.button.Bind(wx.EVT_BUTTON, self.on_button_click)
         # create a button for the version command
@@ -59,6 +61,9 @@ class MyFrame(wx.Frame):
         # a place for the string of the version
         self.my_text = wx.StaticText(self.panel, wx.ID_ANY, "", pos=(80, 0))
         self.layout()
+        # updates the agent list
+        thread = threading.Thread(target=self.update_list)
+        thread.start()
 
     def layout(self):
         """
@@ -116,6 +121,27 @@ class MyFrame(wx.Frame):
         """
         global sharer
         c.stop_share()
+
+    def update_list(self):
+        global agents
+        c = Controller()  # creates a controller object
+        # connects the controller to the server
+        c.connect(SERVER_IP, SERVER_PORT)
+        while True:
+            # get the list of agents from the controller
+            new_agents = c.do_get_agents()
+            new_agents = [a for a in new_agents
+                          if not a.strip(" ").startswith("'controller_")]
+            list_len = len(agents)
+            time.sleep(1)
+            new_list_len = len(new_agents)
+            if list_len != new_list_len:
+                self.list.Clear()
+                agents = [a for a in new_agents if
+                          not a.strip(" ").startswith("'controller_")]
+                for a in agents:
+                    self.list.Append(a)
+                print(self.list)
 
 
 def main():
