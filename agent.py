@@ -177,7 +177,14 @@ VERSION = -1
 #
 #
 class Agent:
+    """
+    the agent class
+    """
     def __init__(self, my_id):
+        """
+        constructor
+        :param my_id:
+        """
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.my_id = my_id
 

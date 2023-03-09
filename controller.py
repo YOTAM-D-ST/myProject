@@ -1,3 +1,6 @@
+"""
+controller file
+"""
 import argparse
 import threading
 
@@ -32,7 +35,13 @@ done = False
 # print(args.agent_name)
 
 class Controller(client.Client):
+    """
+    controller class
+    """
     def __init__(self):
+        """
+        instructor
+        """
         super().__init__("controller_{}".format
                          (threading.current_thread().name))
 

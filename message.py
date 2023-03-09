@@ -1,3 +1,6 @@
+"""
+messages file
+"""
 import pickle
 import struct
 
@@ -69,6 +72,10 @@ class Login(Message):
     """
 
     def __init__(self, my_id):
+        """
+        constructor
+        :param my_id:
+        """
         super().__init__("login", my_id)
 
 
@@ -78,6 +85,10 @@ class Share(Message):
     """
 
     def __init__(self, peer, my_id):
+        """
+                constructor
+                :param my_id:
+                """
         super().__init__("share", my_id)
         self.peer = peer
 
@@ -88,6 +99,10 @@ class ShareResponse(Message):
     """
 
     def __init__(self, ok, my_id):
+        """
+        constructor
+        :param my_id:
+        """
         super().__init__("share-response", my_id)
         self.ok = ok
 
@@ -98,6 +113,10 @@ class Chat(Message):
     """
 
     def __init__(self, msg, peer, my_id):
+        """
+        constructor
+        :param my_id:
+        """
         super().__init__("chat", my_id)
         self.msg = msg
         self.peer = peer
@@ -109,6 +128,10 @@ class Frame(Message):
     """
 
     def __init__(self, frame, peer, my_id):
+        """
+        constructor
+        :param my_id:
+    """
         super().__init__("frame", my_id)
         self.frame = frame
         self.peer = peer
@@ -120,6 +143,10 @@ class GetAgents(Message):
     """
 
     def __init__(self, my_id):
+        """
+        construct
+        :param my_id:
+        """
         super().__init__("get-agents", my_id)
 
 
@@ -129,6 +156,11 @@ class GetAgentsResponse(Message):
     """
 
     def __init__(self, agents, my_id):
+        """
+        construct
+        :param agents:
+        :param my_id:
+        """
         super().__init__("get-agents_response", my_id)
         self.agents = agents
 
@@ -139,6 +171,11 @@ class StopShare(Message):
     """
 
     def __init__(self, agent_name, my_id):
+        """
+        construct
+        :param agent_name:
+        :param my_id:
+        """
         super().__init__("stop-share", my_id)
         self.peer = agent_name
 
@@ -150,6 +187,11 @@ class Version(Message):
     """
 
     def __init__(self, version, my_id):
+        """
+        constructor
+        :param version:
+        :param my_id:
+        """
         super().__init__("version", my_id)
         self.version = version
         self.peer = "controller_MainThread"
@@ -162,5 +204,10 @@ class GetVersion(Message):
     """
 
     def __init__(self, my_id, agent):
+        """
+        constructor
+        :param my_id:
+        :param agent:
+        """
         super().__init__("get-version", my_id)
         self.peer = agent

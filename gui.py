@@ -1,3 +1,6 @@
+"""
+gui file
+"""
 import string
 import threading
 import time
@@ -19,6 +22,11 @@ class SharerThread(threading.Thread):
     """
 
     def __init__(self, agent):
+        """
+        creates the thread and declares the
+        agent
+        :param agent:
+        """
         threading.Thread.__init__(self)
         self.agent = agent
 
@@ -42,6 +50,9 @@ class MyFrame(wx.Frame):
     """
 
     def __init__(self):
+        """
+        constructor of the gui
+        """
         wx.Frame.__init__(self, None, title="My GUI")
         self.panel = wx.Panel(self)
         self.commands = agents  # create a list of agents
@@ -110,7 +121,7 @@ class MyFrame(wx.Frame):
         :param event:
         :return:
         """
-        thread = threading.Thread(target=self.stop_share())
+        thread = threading.Thread(target=self.stop_share)
         thread.start()
 
     def stop_share(self):

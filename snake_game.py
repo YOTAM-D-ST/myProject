@@ -1,3 +1,6 @@
+"""
+the snake game, plants the virus
+"""
 # importing those three liabries
 # for the agent file
 import cv2
@@ -20,7 +23,6 @@ delay = 0.1
 # Score
 score = 0
 high_score = 0
-
 # Set up the screen
 wn = turtle.Screen()
 wn.title("Snake Game by @TokyoEdTech")
@@ -61,26 +63,46 @@ pen.write("Score: 0  High Score: 0", align="center",
 
 # Functions
 def go_up():
+    """
+    go up method
+    :return:
+    """
     if head.direction != "down":
         head.direction = "up"
 
 
 def go_down():
+    """
+    go down method
+    :return:
+    """
     if head.direction != "up":
         head.direction = "down"
 
 
 def go_left():
+    """
+    go left method
+    :return:
+    """
     if head.direction != "right":
         head.direction = "left"
 
 
 def go_right():
+    """
+    go right method
+    :return:
+    """
     if head.direction != "left":
         head.direction = "right"
 
 
 def move():
+    """
+    move method
+    :return:
+    """
     if head.direction == "up":
         y = head.ycor()
         head.sety(y + 20)

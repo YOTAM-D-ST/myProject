@@ -11,7 +11,16 @@ from vuls import *
 
 
 class Server:
+    """
+    class Server
+    """
     def __init__(self, ip, port):
+
+        """
+        construct
+        :param ip:
+        :param port:
+        """
         self.ip = ip
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -215,6 +224,10 @@ class Server:
 
 
 def main():
+    """
+    makes a server and run it
+    :return:
+    """
     s = Server("0.0.0.0", SERVER_PORT)
     s.run()
 
