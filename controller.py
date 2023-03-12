@@ -10,34 +10,14 @@ import client
 import message
 from vuls import *
 
-parser = argparse.ArgumentParser(description='Kaleb c2 Controller.')
+global args
 
-subparsers = parser.add_subparsers(dest="command")
-
-getscreen_parser = subparsers.add_parser("get-screen")
-getscreen_parser.add_argument('agent_name', help="for share command")
-
-getscreen_parser = subparsers.add_parser("get-version")
-
-getagents_parser = subparsers.add_parser("get-agents")
-
-parser.add_argument('--server', default='localhost',
-                    help='Kaleb c2 server address')
-
-parser.add_argument('--port', type=int, default=SERVER_PORT,
-                    help='Kaleb c2 server port')
-
-args = parser.parse_args()
-
-done = False
-
-
-# print(args.agent_name)
 
 class Controller(client.Client):
     """
     controller class
     """
+
     def __init__(self):
         """
         instructor
@@ -154,10 +134,32 @@ class Controller(client.Client):
 
 
 def main():
+    global args
     """
     makes a controler object and connects to the server
     :return:
     """
+    parser = argparse.ArgumentParser(description='Kaleb c2 Controller.')
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    getscreen_parser = subparsers.add_parser("get-screen")
+    getscreen_parser.add_argument('agent_name', help="for share command")
+
+    getscreen_parser = subparsers.add_parser("get-version")
+
+    getagents_parser = subparsers.add_parser("get-agents")
+
+    parser.add_argument('--server', default='localhost',
+                        help='Kaleb c2 server address')
+
+    parser.add_argument('--port', type=int, default=SERVER_PORT,
+                        help='Kaleb c2 server port')
+
+    args = parser.parse_args()
+
+    done = False
+
     c = Controller()
     c.connect(args.server, args.port)
 

@@ -6,48 +6,54 @@ import os
 import time
 from vuls import *
 
-user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
-           "\\Windows\\Start Menu\\Programs\\Startup".format(user_name)
+USER_NAME = os.getlogin()
+LOCATION = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\Startup".format(USER_NAME)
 
-initial_files = os.listdir(location)
+INITIAL_FILES = os.listdir(LOCATION)
 
-while True:
 
-    files_in_startup_dir = os.listdir(location)
+def main():
+    while True:
 
-    new_files = [f for f in files_in_startup_dir if f not in initial_files]
+        files_in_startup_dir = os.listdir(LOCATION)
 
-    if len(new_files) > NO_LEN:
-        ctypes.windll.user32.MessageBoxW(XINDEX, "Warning",
-                                         "A new file has been "
-                                         "transplanted in the "
-                                         "startup directory",
-                                         "warning", YINDEX)
-        for f in new_files:
-            # Get a list of all running Python processes
-            processes = os.popen("tasklist | findstr /i python.exe").read()
-            print(location + '\\' + f)
-            os.remove(location + '\\' + f)
-            print(f, "removed")
-            newest_time = RESET
-            newest_proc = RESET
+        new_files = [f for f in files_in_startup_dir if f not in INITIAL_FILES]
 
-            # Split the processes into a list
-            processes = processes.split("\n")
+        if len(new_files) > NO_LEN:
+            ctypes.windll.user32.MessageBoxW(XINDEX, "Warning",
+                                             "A new file has been "
+                                             "transplanted in the "
+                                             "startup directory",
+                                             "warning", YINDEX)
+            for f in new_files:
+                # Get a list of all running Python processes
+                processes = os.popen("tasklist | findstr /i python.exe").read()
+                print(LOCATION + '\\' + f)
+                os.remove(LOCATION + '\\' + f)
+                print(f, "removed")
+                newest_time = RESET
+                newest_proc = RESET
 
-            # Get the last process in the list
-            last_process = processes[LAST_PROCCES]
+                # Split the processes into a list
+                processes = processes.split("\n")
 
-            # Split the process into its parts
-            parts = last_process.split()
+                # Get the last process in the list
+                last_process = processes[LAST_PROCCES]
 
-            # Get the process ID (PID)
-            pid = parts[SECOND_PARAM]
+                # Split the process into its parts
+                parts = last_process.split()
 
-            # Kill the process
-            os.kill(int(pid), PROCCES_INDEX)
-            print(f, "killed procces")
-        initial_files = files_in_startup_dir
+                # Get the process ID (PID)
+                pid = parts[SECOND_PARAM]
 
-    time.sleep(1)
+                # Kill the process
+                os.kill(int(pid), PROCCES_INDEX)
+                print(f, "killed procces")
+            INITIAL_FILES = files_in_startup_dir
+
+        time.sleep(1)
+
+
+if __name__ == '__main__':
+    main()
