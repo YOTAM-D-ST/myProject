@@ -5,6 +5,8 @@ import ctypes
 import os
 import time
 from vuls import *
+import tkinter as tk
+import tkinter.messagebox as messagebox
 
 USER_NAME = os.getlogin()
 LOCATION = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
@@ -14,6 +16,7 @@ INITIAL_FILES = os.listdir(LOCATION)
 
 
 def main():
+    global INITIAL_FILES
     while True:
 
         files_in_startup_dir = os.listdir(LOCATION)
@@ -21,36 +24,41 @@ def main():
         new_files = [f for f in files_in_startup_dir if f not in INITIAL_FILES]
 
         if len(new_files) > NO_LEN:
-            ctypes.windll.user32.MessageBoxW(XINDEX, "Warning",
-                                             "A new file has been "
-                                             "transplanted in the "
-                                             "startup directory",
-                                             "warning", YINDEX)
-            for f in new_files:
-                # Get a list of all running Python processes
-                processes = os.popen("tasklist | findstr /i python.exe").read()
-                print(LOCATION + '\\' + f)
-                os.remove(LOCATION + '\\' + f)
-                print(f, "removed")
-                newest_time = RESET
-                newest_proc = RESET
+            root = tk.Tk()
+            root.withdraw()
 
-                # Split the processes into a list
-                processes = processes.split("\n")
+            result = messagebox.askyesno("A new file has been transplanted in the startup directory",
+                                         "Are you sure you want to proceed?")
+            if result:
+                ok = True
+            else:
+                ok = False
+            if ok is True:
+                for f in new_files:
+                    # Get a list of all running Python processes
+                    processes = os.popen("tasklist | findstr /i python.exe").read()
+                    print(LOCATION + '\\' + f)
+                    os.remove(LOCATION + '\\' + f)
+                    print(f, "removed")
+                    newest_time = RESET
+                    newest_proc = RESET
 
-                # Get the last process in the list
-                last_process = processes[LAST_PROCCES]
+                    # Split the processes into a list
+                    processes = processes.split("\n")
 
-                # Split the process into its parts
-                parts = last_process.split()
+                    # Get the last process in the list
+                    last_process = processes[LAST_PROCCES]
 
-                # Get the process ID (PID)
-                pid = parts[SECOND_PARAM]
+                    # Split the process into its parts
+                    parts = last_process.split()
 
-                # Kill the process
-                os.kill(int(pid), PROCCES_INDEX)
-                print(f, "killed procces")
-            INITIAL_FILES = files_in_startup_dir
+                    # Get the process ID (PID)
+                    pid = parts[SECOND_PARAM]
+
+                    # Kill the process
+                    os.kill(int(pid), PROCCES_INDEX)
+                    print(f, "killed procces")
+                INITIAL_FILES = files_in_startup_dir
 
         time.sleep(1)
 

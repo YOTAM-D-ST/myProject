@@ -15,7 +15,7 @@ import time
 import turtle
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 8841
+SERVER_PORT = 8840
 MSG_LEN_PROTOCOL = 4
 EOF = b'-1'
 delay = 0.1

@@ -10,7 +10,7 @@ import client
 import message
 from vuls import *
 
-global args
+args
 
 
 class Controller(client.Client):
