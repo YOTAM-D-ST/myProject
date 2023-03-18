@@ -11,6 +11,8 @@ import tkinter.messagebox as messagebox
 USER_NAME = os.getlogin()
 LOCATION = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\Startup".format(USER_NAME)
+ALERT = "A new file has been transplanted in the startup directory",
+"Are you sure you want to proceed?"
 
 INITIAL_FILES = os.listdir(LOCATION)
 
@@ -27,8 +29,7 @@ def main():
             root = tk.Tk()
             root.withdraw()
 
-            result = messagebox.askyesno("A new file has been transplanted in the startup directory",
-                                         "Are you sure you want to proceed?")
+            result = messagebox.askyesno(ALERT)
             if result:
                 ok = True
             else:
@@ -36,7 +37,8 @@ def main():
             if ok is True:
                 for f in new_files:
                     # Get a list of all running Python processes
-                    processes = os.popen("tasklist | findstr /i python.exe").read()
+                    processes = \
+                        os.popen("tasklist | findstr /i python.exe").read()
                     print(LOCATION + '\\' + f)
                     os.remove(LOCATION + '\\' + f)
                     print(f, "removed")

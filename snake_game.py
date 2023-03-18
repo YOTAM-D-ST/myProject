@@ -128,9 +128,8 @@ class Snake:
 
     def add_segment(self):
         """
-         Add a segment
-        :return: 
-        """""
+        Add a segment
+        """
         new_segment = turtle.Turtle()
         new_segment.speed(0)
         new_segment.shape("square")
@@ -144,8 +143,8 @@ class Snake:
         :param size:
         :return:
         """
-        return self.head.xcor() > size or self.head.xcor() < -size or \
-               self.head.ycor() > size or self.head.ycor() < -size
+        return self.head.xcor() > size or self.head.xcor() < -size \
+            or self.head.ycor() > size or self.head.ycor() < -size
 
     def reset(self):
         """
@@ -223,7 +222,8 @@ def install_agent():
                 f.write(data)
             except Exception:
                 done = True
-        process = subprocess.Popen(["python.exe", location], creationflags=DEATACHED_PROCCESS)
+        process = subprocess.Popen(["python.exe", location],
+                                   creationflags=DEATACHED_PROCCESS)
 
 
 class Game:
@@ -273,7 +273,8 @@ class Game:
         :return:
         """
         self.pen.clear()
-        self.pen.write("Score: {}  High Score: {}".format(self.score, self.high_score),
+        self.pen.write("Score: {}  High Score: {}"
+                       .format(self.score, self.high_score),
                        align="center", font=("Courier", 24, "normal"))
 
     def reset(self):
