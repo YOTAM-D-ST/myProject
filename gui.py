@@ -1,8 +1,6 @@
 """
 gui file
 """
-import string
-import threading
 import time
 
 import wx
@@ -13,6 +11,7 @@ from vuls import *
 global sharer
 global c
 global agents
+global sharer
 
 
 class SharerThread(threading.Thread):
@@ -42,6 +41,9 @@ class SharerThread(threading.Thread):
         print(self.agent)
         # Run the selected command
         c.do("get-screen", self.agent)
+
+    def stop(self):
+        self.join()
 
 
 class MyFrame(wx.Frame):
@@ -115,6 +117,7 @@ class MyFrame(wx.Frame):
         # t.start()
 
     def on_stop_button_click(self, event):
+        global sharer
         """
         calls the stop share method from the controller
         :param event:
@@ -131,6 +134,7 @@ class MyFrame(wx.Frame):
         """
         global sharer
         c.stop_share()
+        sharer.stop()
 
     def update_list(self):
         global agents
