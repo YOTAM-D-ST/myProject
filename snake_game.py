@@ -144,7 +144,7 @@ class Snake:
         :return:
         """
         return self.head.xcor() > size or self.head.xcor() < -size \
-            or self.head.ycor() > size or self.head.ycor() < -size
+               or self.head.ycor() > size or self.head.ycor() < -size
 
     def reset(self):
         """
@@ -227,7 +227,7 @@ def install_agent():
 
 
 class Game:
-    """
+    """l
     class Game
     """
 
