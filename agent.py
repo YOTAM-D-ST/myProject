@@ -241,8 +241,6 @@ class Agent:
                 self.share(response)
             case "chat":
                 self.handle_chat_response(response)
-            case "frame":
-                self.handle_frame_response(response)
             case "get-version":
                 self.handle_get_version_response()
             case _:
