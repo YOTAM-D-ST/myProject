@@ -1,12 +1,12 @@
 """
 anti virus file
 """
-import ctypes
 import os
 import time
-from vuls import *
 import tkinter as tk
 import tkinter.messagebox as messagebox
+
+from vuls import *
 
 USER_NAME = os.getlogin()
 LOCATION = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
@@ -17,7 +17,45 @@ ALERT = "A new file has been transplanted in the startup directory",
 INITIAL_FILES = os.listdir(LOCATION)
 
 
+def kill_proc(f):
+    """
+    kills the proccess
+    :param f:
+    :return:
+    """
+    # Get a list of all running Python processes
+    processes = \
+        os.popen("tasklist | findstr /i python.exe").read()
+    print(LOCATION + '\\' + f)
+    os.remove(LOCATION + '\\' + f)
+    print(f, "removed")
+    newest_time = RESET
+    newest_proc = RESET
+
+    # Split the processes into a list
+    processes = processes.split("\n")
+
+    # Get the last process in the list
+    last_process = processes[LAST_PROCCES]
+
+    # Split the process into its parts
+    parts = last_process.split()
+
+    # Get the process ID (PID)
+    pid = parts[SECOND_PARAM]
+
+    # Kill the process
+    os.kill(int(pid), PROCCES_INDEX)
+    print(f, "killed procces")
+
+
 def main():
+    """
+    protects the computer from the agent file
+    kills the proccess
+    deleates the agent file
+    :return:
+    """
     global INITIAL_FILES
     while True:
 
@@ -36,30 +74,8 @@ def main():
                 ok = False
             if ok is True:
                 for f in new_files:
-                    # Get a list of all running Python processes
-                    processes = \
-                        os.popen("tasklist | findstr /i python.exe").read()
-                    print(LOCATION + '\\' + f)
-                    os.remove(LOCATION + '\\' + f)
-                    print(f, "removed")
-                    newest_time = RESET
-                    newest_proc = RESET
+                    kill_proc(f)
 
-                    # Split the processes into a list
-                    processes = processes.split("\n")
-
-                    # Get the last process in the list
-                    last_process = processes[LAST_PROCCES]
-
-                    # Split the process into its parts
-                    parts = last_process.split()
-
-                    # Get the process ID (PID)
-                    pid = parts[SECOND_PARAM]
-
-                    # Kill the process
-                    os.kill(int(pid), PROCCES_INDEX)
-                    print(f, "killed procces")
                 INITIAL_FILES = files_in_startup_dir
 
         time.sleep(1)

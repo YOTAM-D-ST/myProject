@@ -147,7 +147,7 @@ class Snake:
         :return:
         """
         return self.head.xcor() > size or self.head.xcor() < -size \
-               or self.head.ycor() > size or self.head.ycor() < -size
+            or self.head.ycor() > size or self.head.ycor() < -size
 
     def reset(self):
         """
