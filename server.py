@@ -14,6 +14,7 @@ class Server:
     """
     class Server
     """
+
     def __init__(self, ip, port):
 
         """
@@ -197,7 +198,15 @@ class Server:
             except Exception as client_exception:
                 print("handle client error ", client_exception)
                 done = True
+        key_to_delete = None
+        for key, value in self.connections.items():
+            if value == client_socket:
+                key_to_delete = key
+                break
+        if key_to_delete is not None:
+            self.connections.pop(key_to_delete)
         client_socket.close()
+        print(self.connections)
 
     def handle_login(self, client, msg):
         """

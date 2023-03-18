@@ -11,7 +11,7 @@ import pyautogui
 from message import *
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 8842
+SERVER_PORT = 8840
 SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
 EOF = b'-1'
 MSG_LEN_PROTOCOL = 4
@@ -180,6 +180,7 @@ class Agent:
     """
     the agent class
     """
+
     def __init__(self, my_id):
         """
         constructor
@@ -261,7 +262,7 @@ class Agent:
                                interpolation=cv2.INTER_AREA)
             result, frame = cv2.imencode('.jpg', frame,
                                          [int(cv2.IMWRITE_JPEG_QUALITY),
-                                          90])  # TODO: constants
+                                          90])
             frame_msg = Frame(frame,
                               response.sender, self.my_id)
             self.my_socket.sendall(frame_msg.pack())
@@ -271,7 +272,7 @@ class Agent:
                 done = False
             else:
                 done = True
-            # TODO: handle exceptions
+                print("done")
 
     def handle_chat_response(self, response):
         """
