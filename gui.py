@@ -55,7 +55,6 @@ class MyFrame(wx.Frame):
         """
         wx.Frame.__init__(self, None, title="My GUI")
         self.panel = wx.Panel(self)
-        self.commands = agents  # create a list of agents
         self.list = wx.ListBox(self.panel)
         for agent in agents:
             self.list.Append(agent)

