@@ -4,6 +4,8 @@ messages file
 import pickle
 import struct
 
+RECIVER = 1
+
 
 def recv(recv_socket):
     """
@@ -13,13 +15,13 @@ def recv(recv_socket):
     :param recv_socket:
     :return:
     """
-    c = recv_socket.recv(1).decode()
+    c = recv_socket.recv(RECIVER).decode()
     print(c)
     if c == "":
         return ''
     if c == 'g':
         return 'g'
-    payload_size_header = recv_socket.recv(struct.calcsize("!L"))
+    payload_size_header = recv_socket.recv
     payload_size = struct.unpack("!L", payload_size_header)[0]
     # get the rest of the message
     payload = recv_socket.recv(payload_size)

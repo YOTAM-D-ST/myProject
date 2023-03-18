@@ -1,16 +1,18 @@
 """yotam shavit project
     project name: unknown
 """
-import socket
-import sys
 import platform
+import socket
 import subprocess
+import sys
+
 import cv2
 import numpy as np
 import pyautogui
+
 from message import *
 
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "10.100.102.50"
 SERVER_PORT = 8840
 SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
 EOF = b'-1'
@@ -239,8 +241,6 @@ class Agent:
                 self.share(response)
             case "chat":
                 self.handle_chat_response(response)
-            case "frame":
-                self.handle_frame_response(response)
             case "get-version":
                 self.handle_get_version_response()
             case _:

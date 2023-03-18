@@ -44,6 +44,9 @@ class Snake:
     """
 
     def __init__(self):
+        """
+        builds the snake
+        """
 
         # Head position
         self.y = None
@@ -162,6 +165,11 @@ class Snake:
         self.segments.clear()
 
     def distance(self, item):
+        """
+        returns the distance form the head
+        :param item:
+        :return:
+        """
         return self.head.distance(item)
 
     def is_self_collision(self):
@@ -232,6 +240,9 @@ class Game:
     """
 
     def __init__(self):
+        """
+        builds the game
+        """
         self.delay = INITIAL_DELAY
         self.snake = Snake()
         # Score
