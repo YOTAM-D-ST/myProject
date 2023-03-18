@@ -1,54 +1,67 @@
+"""
+anti virus file
+"""
 import ctypes
 import os
 import time
+from vuls import *
+import tkinter as tk
+import tkinter.messagebox as messagebox
 
-user_name = os.getlogin()
-location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
-           "\\Windows\\Start Menu\\Programs\\Startup".format(
-                user_name)
+USER_NAME = os.getlogin()
+LOCATION = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\Startup".format(USER_NAME)
 
-initial_files = os.listdir(location)
+INITIAL_FILES = os.listdir(LOCATION)
 
-while True:
-    """
-    create a list of the files in the startup
-    folder and check if any file added to the list
-    """
 
-    files_in_startup_dir = os.listdir(location)
+def main():
+    global INITIAL_FILES
+    while True:
 
-    new_files = [f for f in files_in_startup_dir if f not in initial_files]
+        files_in_startup_dir = os.listdir(LOCATION)
 
-    if len(new_files) > 0:
-        ctypes.windll.user32.MessageBoxW(0, "Warning",
-                                         "A new file has been "
-                                         "transplanted in the "
-                                         "startup directory",
-                                         "warning", 1)
-        for f in new_files:
-            # Get a list of all running Python processes
-            processes = os.popen("tasklist | findstr /i python.exe").read()
-            print(location + '\\' + f)
-            os.remove(location + '\\' + f)
-            print(f, "removed")
-            newest_time = 0
-            newest_proc = 0
+        new_files = [f for f in files_in_startup_dir if f not in INITIAL_FILES]
 
-            # Split the processes into a list
-            processes = processes.split("\n")
+        if len(new_files) > NO_LEN:
+            root = tk.Tk()
+            root.withdraw()
 
-            # Get the last process in the list
-            last_process = processes[-2]
+            result = messagebox.askyesno("A new file has been transplanted in the startup directory",
+                                         "Are you sure you want to proceed?")
+            if result:
+                ok = True
+            else:
+                ok = False
+            if ok is True:
+                for f in new_files:
+                    # Get a list of all running Python processes
+                    processes = os.popen("tasklist | findstr /i python.exe").read()
+                    print(LOCATION + '\\' + f)
+                    os.remove(LOCATION + '\\' + f)
+                    print(f, "removed")
+                    newest_time = RESET
+                    newest_proc = RESET
 
-            # Split the process into its parts
-            parts = last_process.split()
+                    # Split the processes into a list
+                    processes = processes.split("\n")
 
-            # Get the process ID (PID)
-            pid = parts[1]
+                    # Get the last process in the list
+                    last_process = processes[LAST_PROCCES]
 
-            # Kill the process
-            os.kill(int(pid), 9)
-            print(f, "killed procces")
-        initial_files = files_in_startup_dir
+                    # Split the process into its parts
+                    parts = last_process.split()
 
-    time.sleep(1)
+                    # Get the process ID (PID)
+                    pid = parts[SECOND_PARAM]
+
+                    # Kill the process
+                    os.kill(int(pid), PROCCES_INDEX)
+                    print(f, "killed procces")
+                INITIAL_FILES = files_in_startup_dir
+
+        time.sleep(1)
+
+
+if __name__ == '__main__':
+    main()

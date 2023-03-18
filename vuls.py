@@ -1,5 +1,8 @@
+"""
+valuables
+"""
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 8841
+SERVER_PORT = 8840
 SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
 EOF = b'-1'
 MSG_LEN_PROTOCOL = 4
@@ -14,3 +17,9 @@ FIRSR_L_AGENT = 11
 LAST_L_AGENT = -2
 WINDOW_PROPERTY = 0
 CHUNKS = 1024
+NO_LEN = 0
+RESET = 0
+LAST_PROCCES = -2
+PROCCES_INDEX = 9
+XINDEX = 0
+YINDEX = 2

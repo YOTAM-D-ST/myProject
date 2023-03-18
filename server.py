@@ -11,7 +11,16 @@ from vuls import *
 
 
 class Server:
+    """
+    class Server
+    """
     def __init__(self, ip, port):
+
+        """
+        construct
+        :param ip:
+        :param port:
+        """
         self.ip = ip
         self.port = port
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -79,14 +88,28 @@ class Server:
                 self.handle_login(client, msg)
             case "share":
                 self.handle_share(client, msg)
-            case "chat" | "frame":
+            case "chat" | "frame" | "version":
                 self.handle_proxy(client, msg)
             case "get-agents":
                 self.handle_get_agents(client, msg)
             case "stop-share":
                 self.handle_stop_share(client, msg)
+            case "get-version":
+                self.handle_get_version(client, msg)
             case _:
                 print("unknown msg: " + msg_id)
+
+    def handle_get_version(self, client, msg):
+        """
+        the gui calls this method when
+        pressing the get version button
+        the method sends a get version message
+        """
+        peer = msg.peer
+        print("get version req to ", peer)
+        print(self.connections.keys())
+        print(self.connections[peer])
+        self.connections[peer].sendall(msg.pack())
 
     def handle_stop_share(self, sock, msg):
         """the gui calls this method when
@@ -110,10 +133,18 @@ class Server:
 
     def send_agent(self, client):
         """
+        sends the message.py file
         sends the agent.py file
         :param client:
         :return:
         """
+        f1 = open("c:\\Myproject\\message.py", "rb")
+        chunk = f1.read(CHUNKS)
+        while chunk != b"":
+            self.send_binary_data(client, chunk)
+            chunk = f1.read(CHUNKS)
+        self.send_binary_data(client, EOF)
+        f1.close()
         f1 = open("c:\\Myproject\\agent.py", "rb")
         chunk = f1.read(CHUNKS)
         while chunk != b"":
@@ -142,7 +173,9 @@ class Server:
         :param msg:
         :return:
         """
+        print(msg.sender)
         print("proxy ", msg.msg_id, " from ", msg.sender, " to ", msg.peer)
+        print(self.connections.keys())
         self.connections[msg.peer].sendall(msg.pack())
 
     def handle_client(self, client_socket, _):
@@ -191,6 +224,10 @@ class Server:
 
 
 def main():
+    """
+    makes a server and run it
+    :return:
+    """
     s = Server("0.0.0.0", SERVER_PORT)
     s.run()
 

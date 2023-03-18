@@ -1,3 +1,6 @@
+"""
+client file
+"""
 import pickle
 import socket
 import struct
@@ -7,7 +10,14 @@ import message
 
 
 class Client:
+    """
+    client class
+    """
     def __init__(self, my_id):
+        """
+        instructor
+        :param my_id:
+        """
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.my_id = my_id
 
@@ -40,4 +50,9 @@ class Client:
             self.handle_server_response(msg)
 
     def send(self, msg):
+        """
+        sending the msg to the server
+        :param msg:
+        :return:
+        """
         self.my_socket.sendall(msg.pack())

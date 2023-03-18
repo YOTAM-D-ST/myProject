@@ -3,13 +3,15 @@
 """
 import socket
 import sys
-
+import platform
+import subprocess
 import cv2
 import numpy as np
 import pyautogui
+from message import *
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 8841
+SERVER_PORT = 8842
 SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
 EOF = b'-1'
 MSG_LEN_PROTOCOL = 4
@@ -18,149 +20,171 @@ SOCK_READ_SIZE = 4096
 FIRST_LETTER = 1
 LAST_LETTER = -1
 EXIT = 1
-TWO_PARAMS = 2
-SECOND_PARAM = 1
+NUM_OF_EXPECTED_PARAMS = 2
+PARAM_NAME_OF_AGENT = 1
 FIRSR_L_AGENT = 11
 LAST_L_AGENT = -2
 WINDOW_PROPERTY = 0
 CHUNKS = 1024
-
-import pickle
-import struct
+VERSION = -1
 
 
-def recv(recv_socket):
-    """
-    the protocol, using pickle and struct libary,
-    gets the header recive the message.
-    returns the message
-    :param recv_socket:
-    :return:
-    """
-    c = recv_socket.recv(1).decode()
-    if c == "":
-        return ''
-    if c == 'g':
-        return 'g'
-    payload_size_header = recv_socket.recv(struct.calcsize("!L"))
-    payload_size = struct.unpack("!L", payload_size_header)[0]
-    # get the rest of the message
-    payload = recv_socket.recv(payload_size)
-    # unpickle the msg into an object
-    response = pickle.loads(payload, encoding="bytes")
-    return response
-
-
-class Message:
-    def __init__(self, msg_id, sender):
-        """
-        basic class
-        :param msg_id:
-        """
-        self.msg_id = msg_id
-        self.sender = sender
-
-    def get_id(self):
-        """
-        returns the id
-        :return:
-        """
-        return self.msg_id
-
-    def pack(self):
-        """
-        packs the message so it
-        culd be send using socket
-        :return:
-        """
-        msg = pickle.dumps(self)
-        size = len(msg)
-        packed_size = struct.pack("!L", size)
-        return 'a'.encode() + packed_size + msg
-
-
-class Login(Message):
-    """
-    login sent to the server to identify
-    """
-
-    def __init__(self, my_id):
-        super().__init__("login", my_id)
-
-
-class Share(Message):
-    """
-    share message nicluding peer
-    """
-
-    def __init__(self, peer, my_id):
-        super().__init__("share", my_id)
-        self.peer = peer
-
-
-class ShareResponse(Message):
-    """
-    confirms the share, used by the server
-    """
-
-    def __init__(self, ok, my_id):
-        super().__init__("share-response", my_id)
-        self.ok = ok
-
-
-class Chat(Message):
-    """
-    in case the agents will chat, currently not in use
-    """
-
-    def __init__(self, msg, peer, my_id):
-        super().__init__("chat", my_id)
-        self.msg = msg
-        self.peer = peer
-
-
-class Frame(Message):
-    """
-    the frame that sent when sharing screen
-    """
-
-    def __init__(self, frame, peer, my_id):
-        super().__init__("frame", my_id)
-        self.frame = frame
-        self.peer = peer
-
-
-class GetAgents(Message):
-    """
-    get agents message, used by controller
-    """
-
-    def __init__(self, my_id):
-        super().__init__("get-agents", my_id)
-
-
-class GetAgentsResponse(Message):
-    """
-    get agents response used by server
-    """
-
-    def __init__(self, agents, my_id):
-        super().__init__("get-agents_response", my_id)
-        self.agents = agents
-
-
-class StopShare(Message):
-    """
-    a message that declare to stop the share screen
-    """
-
-    def __init__(self, agent_name, my_id):
-        super().__init__("stop-share", my_id)
-        self.peer = agent_name
-
-
+# import pickle
+# import struct
+#
+#
+# def recv(recv_socket):
+#     """
+#     the protocol, using pickle and struct libary,
+#     gets the header recive the message.
+#     returns the message
+#     :param recv_socket:
+#     :return:
+#     """
+#     c = recv_socket.recv(1).decode()
+#     if c == "":
+#         return ''
+#     if c == 'g':
+#         return 'g'
+#     payload_size_header = recv_socket.recv(struct.calcsize("!L"))
+#     payload_size = struct.unpack("!L", payload_size_header)[0]
+#     # get the rest of the message
+#     payload = recv_socket.recv(payload_size)
+#     # unpickle the msg into an object
+#     response = pickle.loads(payload, encoding="bytes")
+#     return response
+#
+#
+# class Message:
+#     def __init__(self, msg_id, sender):
+#         """
+#         basic class
+#         :param msg_id:
+#         """
+#         self.msg_id = msg_id
+#         self.sender = sender
+#
+#     def get_id(self):
+#         """
+#         returns the id
+#         :return:
+#         """
+#         return self.msg_id
+#
+#     def pack(self):
+#         """
+#         packs the message so it
+#         culd be send using socket
+#         :return:
+#         """
+#         msg = pickle.dumps(self)
+#         size = len(msg)
+#         packed_size = struct.pack("!L", size)
+#         return 'a'.encode() + packed_size + msg
+#
+#
+# class Login(Message):
+#     """
+#     login sent to the server to identify
+#     """
+#
+#     def __init__(self, my_id):
+#         super().__init__("login", my_id)
+#
+#
+# class Share(Message):
+#     """
+#     share message nicluding peer
+#     """
+#
+#     def __init__(self, peer, my_id):
+#         super().__init__("share", my_id)
+#         self.peer = peer
+#
+#
+# class ShareResponse(Message):
+#     """
+#     confirms the share, used by the server
+#     """
+#
+#     def __init__(self, ok, my_id):
+#         super().__init__("share-response", my_id)
+#         self.ok = ok
+#
+#
+# class Chat(Message):
+#     """
+#     in case the agents will chat, currently not in use
+#     """
+#
+#     def __init__(self, msg, peer, my_id):
+#         super().__init__("chat", my_id)
+#         self.msg = msg
+#         self.peer = peer
+#
+#
+# class Frame(Message):
+#     """
+#     the frame that sent when sharing screen
+#     """
+#
+#     def __init__(self, frame, peer, my_id):
+#         super().__init__("frame", my_id)
+#         self.frame = frame
+#         self.peer = peer
+#
+#
+# class GetAgents(Message):
+#     """
+#     get agents message, used by controller
+#     """
+#
+#     def __init__(self, my_id):
+#         super().__init__("get-agents", my_id)
+#
+#
+# class GetAgentsResponse(Message):
+#     """
+#     get agents response used by server
+#     """
+#
+#     def __init__(self, agents, my_id):
+#         super().__init__("get-agents_response", my_id)
+#         self.agents = agents
+#
+#
+# class StopShare(Message):
+#     """
+#     a message that declare to stop the share screen
+#     """
+#
+#     def __init__(self, agent_name, my_id):
+#         super().__init__("stop-share", my_id)
+#         self.peer = agent_name
+#
+#
+# class Version(Message):
+#     def __init__(self, version, my_id):
+#         super().__init__("version", my_id)
+#         self.version = version
+#         self.peer = "controller_MainThread"
+#
+#
+# class GetVersion(Message):
+#     def __init__(self, my_id, agent):
+#         super().__init__("get-version", my_id)
+#         self.peer = agent
+#
+#
 class Agent:
+    """
+    the agent class
+    """
     def __init__(self, my_id):
+        """
+        constructor
+        :param my_id:
+        """
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.my_id = my_id
 
@@ -216,6 +240,8 @@ class Agent:
                 self.handle_chat_response(response)
             case "frame":
                 self.handle_frame_response(response)
+            case "get-version":
+                self.handle_get_version_response()
             case _:
                 print("unknown msg: " + msg_id)
 
@@ -255,21 +281,48 @@ class Agent:
         """
         print("chat msg ", response.msg)
 
-    def handle_frame_response(self, response):
+    def handle_get_version_response(self):
         """
-        in case the agent want to recive frames
-        :param response:
-        :return:
+        checks if the system is up - to -date
         """
-        frame = response.frame
-        frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-        cv2.imshow("hello", frame)
-        cv2.waitKey(1)
+        operating_system = platform.system()
+        if operating_system == "Windows":
+            command = "wmic os get caption,version"
+            result = subprocess.check_output(command,
+                                             shell=True).decode("utf-8")
+            version = result.splitlines()[1].strip().split(" ")[Version]
+            if version.startswith("10.") and version >= "10.0.19041":
+                msg = Version("the operating system version is up-to-date:"
+                              " " + version, self.my_id)
+            else:
+                msg = Version("the operating system version is not "
+                              "up-to-date: " + version, self.my_id)
+        elif operating_system == "Linux":
+            command = "lsb_release -d"
+            result = subprocess.check_output(command, shell=True). \
+                decode("utf-8")
+            version = result.split(":")[-Version].strip()
+            if version:
+                msg = Version("the operating system version is "
+                              "up-to-date: " + version, self.my_id)
+            else:
+                msg = ("the operating system version is "
+                       "not up-to-date: " + version, self.my_id)
+        else:
+            msg = Version("the operating system is not "
+                          "supported by this code", self.my_id)
+        self.my_socket.sendall(msg.pack())
 
 
 def main():
-    if len(sys.argv) >= TWO_PARAMS:
-        a = Agent(sys.argv[SECOND_PARAM])
+    """
+    create the agent wtih the ip
+    as recognition and connects to
+    the server
+    :return:
+    """
+    if len(sys.argv) >= NUM_OF_EXPECTED_PARAMS:
+        a = Agent(sys.argv[PARAM_NAME_OF_AGENT])
     else:
         try:
             hostname = socket.gethostname()
@@ -280,8 +333,8 @@ def main():
     print("client ", a.my_id)
     print(len(sys.argv))
     a.connect(SERVER_IP, SERVER_PORT)
-    if len(sys.argv) > TWO_PARAMS:
-        a.share(sys.argv[TWO_PARAMS])
+    if len(sys.argv) > NUM_OF_EXPECTED_PARAMS:
+        a.share(sys.argv[NUM_OF_EXPECTED_PARAMS])
     a.recv()
 
 

