@@ -12,7 +12,7 @@ import pyautogui
 
 from message import *
 
-SERVER_IP = "10.100.102.50"
+SERVER_IP = "127.0.0.1"
 SERVER_PORT = 8840
 SEND_TO_SOCKET = 1  # The maximum length of the pending connections queue.
 EOF = b'-1'

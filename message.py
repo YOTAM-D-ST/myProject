@@ -21,7 +21,7 @@ def recv(recv_socket):
         return ''
     if c == 'g':
         return 'g'
-    payload_size_header = recv_socket.recv
+    payload_size_header = recv_socket.recv(struct.calcsize("!L"))
     payload_size = struct.unpack("!L", payload_size_header)[0]
     # get the rest of the message
     payload = recv_socket.recv(payload_size)
