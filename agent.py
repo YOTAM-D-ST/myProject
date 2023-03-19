@@ -1,6 +1,7 @@
 """yotam shavit project
     project name: unknown
 """
+import winreg
 import platform
 import socket
 import subprocess
@@ -288,28 +289,21 @@ class Agent:
         """
         operating_system = platform.system()
         if operating_system == "Windows":
-            command = "wmic os get caption,version"
-            result = subprocess.check_output(command,
-                                             shell=True).decode("utf-8")
-            version = result.splitlines()[1].strip().split(" ")[Version]
-            if version.startswith("10.") and version >= "10.0.19041":
-                msg = Version("the operating system version is up-to-date:"
-                              " " + version, self.my_id)
-            else:
-                msg = Version("the operating system version is not "
-                              "up-to-date: " + version, self.my_id)
+            # Open the Windows Registry key for the release information
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+
+            # Read the CurrentBuildNumber value
+            current_build_number, _ = winreg.QueryValueEx(key, "CurrentBuildNumber")
+
+            # Read the ReleaseId value
+            release_id, _ = winreg.QueryValueEx(key, "ReleaseId")
+
+            # Print the version information
+            print("current_build_number: ", current_build_number,
+                  " release_id: ", release_id)
+            msg = Version("current_build_number: " + current_build_number +
+                          " release_id: " + release_id, self.my_id)
         elif operating_system == "Linux":
-            command = "lsb_release -d"
-            result = subprocess.check_output(command, shell=True). \
-                decode("utf-8")
-            version = result.split(":")[-Version].strip()
-            if version:
-                msg = Version("the operating system version is "
-                              "up-to-date: " + version, self.my_id)
-            else:
-                msg = ("the operating system version is "
-                       "not up-to-date: " + version, self.my_id)
-        else:
             msg = Version("the operating system is not "
                           "supported by this code", self.my_id)
         self.my_socket.sendall(msg.pack())
