@@ -290,10 +290,13 @@ class Agent:
         operating_system = platform.system()
         if operating_system == "Windows":
             # Open the Windows Registry key for the release information
-            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+            key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
 
             # Read the CurrentBuildNumber value
-            current_build_number, _ = winreg.QueryValueEx(key, "CurrentBuildNumber")
+            current_build_number, _ = winreg.QueryValueEx(key,
+                                                          "CurrentBuildNumber")
 
             # Read the ReleaseId value
             release_id, _ = winreg.QueryValueEx(key, "ReleaseId")
